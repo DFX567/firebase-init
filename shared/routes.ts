@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { insertItemSchema, items } from './schema';
+import { insertUserSchema, users } from './schema';
 
 export const errorSchemas = {
   validation: z.object({
@@ -15,47 +15,12 @@ export const errorSchemas = {
 };
 
 export const api = {
-  items: {
-    list: {
-      method: 'GET' as const,
-      path: '/api/items',
-      responses: {
-        200: z.array(z.custom<typeof items.$inferSelect>()),
-      },
-    },
-    get: {
-      method: 'GET' as const,
-      path: '/api/items/:id',
-      responses: {
-        200: z.custom<typeof items.$inferSelect>(),
-        404: errorSchemas.notFound,
-      },
-    },
-    create: {
-      method: 'POST' as const,
-      path: '/api/items',
-      input: insertItemSchema,
-      responses: {
-        201: z.custom<typeof items.$inferSelect>(),
-        400: errorSchemas.validation,
-      },
-    },
-    update: {
-      method: 'PUT' as const,
-      path: '/api/items/:id',
-      input: insertItemSchema.partial(),
-      responses: {
-        200: z.custom<typeof items.$inferSelect>(),
-        404: errorSchemas.notFound,
-      },
-    },
-    delete: {
-      method: 'DELETE' as const,
-      path: '/api/items/:id',
-      responses: {
-        204: z.void(),
-        404: errorSchemas.notFound,
-      },
+  // Minimal API definition
+  status: {
+    method: 'GET' as const,
+    path: '/api/status',
+    responses: {
+      200: z.object({ status: z.string() }),
     },
   },
 };

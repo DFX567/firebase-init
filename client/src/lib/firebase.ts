@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, type User } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, type User } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,7 +13,7 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
-export async function signInWithGoogle() {
+export async function loginWithGoogle() {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
@@ -24,26 +23,11 @@ export async function signInWithGoogle() {
   }
 }
 
-export async function signOut() {
+export async function logout() {
   try {
-    await firebaseSignOut(auth);
+    await signOut(auth);
   } catch (error) {
     console.error("Error signing out", error);
     throw error;
   }
-}
-
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return unsubscribe;
-  }, []);
-
-  return { user, loading };
 }
