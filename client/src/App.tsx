@@ -12,7 +12,6 @@ import AnniversarySection from "./AnniversarySection";
 import CumpleSection from "./CumpleSection";
 import SanValentinSection from "./SanValentinSection";
 import HeartAnimation from "./HeartAnimation";
-import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 
 
 // 🔒 Correos permitidos
