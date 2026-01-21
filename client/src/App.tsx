@@ -1,115 +1,208 @@
-import { useState, useEffect } from 'react';
-import { auth } from './firebase';
-import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from 'firebase/auth';
+import { useEffect, useState } from "react";
+import { auth } from "./firebase";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
+
+import LoginScreen from "./components/LoginScreen";
+import AnniversarySection from "./AnniversarySection";
+import CumpleSection from "./CumpleSection";
+import SanValentinSection from "./SanValentinSection";
+import HeartAnimation from "./HeartAnimation";
+import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
+
+
+// 🔒 Correos permitidos
+const ALLOWED_EMAILS = [
+  "dfx1mas87@gmail.com",
+  "lfbecerraaponte@gmail.com",
+];
 
 function App() {
+  const handleLogout = async () => {
+  await signOut(auth);
+  setUser(null);
+  setCurrentSection("");
+};
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [currentSection, setCurrentSection] = useState("");
+  const [selectedYear, setSelectedYear] = useState(
+    new Date().getFullYear()
+  );
 
+  const years = [2025, 2026, 2027, 2028, 2029, 2030];
+
+  // 🔐 Verificar sesión y correo permitido
   useEffect(() => {
-    console.log("App cargada - chequeando auth...");
-
-    // Escucha cambios en auth (persistencia y redirect)
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("onAuthStateChanged disparado:", currentUser ? currentUser.displayName : "No user");
-      setUser(currentUser);
+      if (
+        currentUser &&
+        currentUser.email &&
+        ALLOWED_EMAILS.includes(currentUser.email)
+      ) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
-
-    // Captura explícitamente el resultado del redirect (muy importante al volver)
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          console.log("getRedirectResult: Login exitoso al volver", result.user.displayName);
-          setUser(result.user);
-          setLoading(false);
-        } else {
-          console.log("getRedirectResult: No result");
-        }
-      })
-      .catch((error) => {
-        console.error("Error en getRedirectResult:", error.code, error.message);
-        setErrorMsg("Error al volver del login: " + error.message);
-        setLoading(false);
-      });
 
     return () => unsubscribe();
   }, []);
 
-  const handleLogin = () => {
-  setLoading(true);
-  setErrorMsg(null);
-  const provider = new GoogleAuthProvider();
-  
-  // Truco para móvil: abre popup manualmente
-  signInWithPopup(auth, provider)
-    .then((result) => {
+  // 🔐 Login con Google
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setErrorMsg(null);
+
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+
+      if (
+        !result.user.email ||
+        !ALLOWED_EMAILS.includes(result.user.email)
+      ) {
+        await auth.signOut();
+        setErrorMsg("Este espacio es solo para nosotros dos 💔");
+        setLoading(false);
+        return;
+      }
+
       setUser(result.user);
       setLoading(false);
-      console.log("Popup login exitoso:", result.user.displayName);
-    })
-    .catch((error) => {
+    } catch (error: any) {
       setLoading(false);
-      console.error("Error popup:", error.code, error.message);
-      if (error.code === 'auth/popup-blocked') {
-        setErrorMsg("Popup bloqueado. Toca el ícono de candado arriba en la barra y permite pop-ups para este sitio.");
-      } else {
-        setErrorMsg("Error: " + error.message);
-      }
-    });
-};
+      setErrorMsg("Error con Google: " + error.message);
+    }
+  };
 
-// En useEffect solo deja el onAuthStateChanged (quita getRedirectResult)
-useEffect(() => {
-  console.log("App cargada - chequeando auth...");
-  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    console.log("onAuthStateChanged:", currentUser ? currentUser.displayName : "No user");
-    setUser(currentUser);
-    setLoading(false);
-  });
-  return () => unsubscribe();
-}, []);
+  const goBack = () => {
+    setCurrentSection("");
+  };
 
+  // ⏳ Cargando
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center">
-        <p className="text-white text-2xl animate-pulse">Cargando sesión... 💕</p>
+        <p className="text-white text-3xl animate-pulse">
+          Cargando nuestro amor... 💕
+        </p>
       </div>
     );
   }
 
+  // ❤️ Usuario logueado
+  if (user) {
+    if (currentSection) {
+      let SectionComponent: any = null;
+
+      if (currentSection === "aniversario")
+        SectionComponent = AnniversarySection;
+      if (currentSection === "cumple")
+        SectionComponent = CumpleSection;
+      if (currentSection === "sanvalentin")
+        SectionComponent = SanValentinSection;
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-pink-400 to-rose-600 flex flex-col items-center p-6">
+          <button
+            onClick={goBack}
+            className="self-start mb-4 bg-white text-rose-600 px-6 py-2 rounded-full text-lg font-bold shadow"
+          >
+            Volver
+          </button>
+
+          <SectionComponent year={selectedYear} />
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-400 to-rose-600 flex flex-col items-center p-6 relative overflow-hidden">
+        <HeartAnimation />
+        <button
+  onClick={handleLogout}
+  className="self-end mb-4 bg-white/80 text-rose-600 px-5 py-2 rounded-full font-bold shadow hover:bg-white transition"
+>
+  Salir 🔒
+</button>
+        <h1 className="text-5xl font-bold text-white mb-8 drop-shadow-2xl text-center">
+          Bienvenida mi amor 💖
+        </h1>
+
+        <div className="mb-6 w-full max-w-xs">
+          <select
+            value={selectedYear}
+            onChange={(e) =>
+              setSelectedYear(Number(e.target.value))
+            }
+            className="w-full p-4 text-xl rounded-full bg-white/80 text-rose-700"
+          >
+            {years.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-4">
+          <button
+            onClick={() => setCurrentSection("aniversario")}
+            className="bg-rose-500 text-white px-6 py-4 rounded-full text-xl font-bold"
+          >
+            Aniversario 💑
+          </button>
+
+          <button
+            onClick={() => setCurrentSection("cumple")}
+            className="bg-blue-500 text-white px-6 py-4 rounded-full text-xl font-bold"
+          >
+            Cumpleaños 🎂
+          </button>
+
+          <button
+            onClick={() => setCurrentSection("sanvalentin")}
+            className="bg-red-500 text-white px-6 py-4 rounded-full text-xl font-bold"
+          >
+            San Valentín ❤️
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔑 Login
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-400 to-rose-600 flex flex-col items-center justify-center p-6 text-center">
-      <h1 className="text-5xl md:text-6xl font-bold text-white mb-8 drop-shadow-lg">
-        Para mi Lina Eterna 💕
+    <div className="min-h-screen bg-gradient-to-br from-pink-400 to-rose-600 flex flex-col items-center justify-center p-6">
+      <h1 className="text-5xl font-bold text-white mb-10 text-center">
+        Nuestro Espacio Secreto 💕
       </h1>
 
-      {user ? (
-        <div className="bg-white/90 backdrop-blur-md p-10 rounded-3xl shadow-2xl max-w-md w-full">
-          <p className="text-3xl font-semibold text-rose-600 mb-4">
-            ¡Bienvenida, {user.displayName || "mi amor"}! ❤️
+      <div className="bg-white/80 p-10 rounded-3xl shadow-xl max-w-md w-full text-center">
+        <p className="text-xl text-rose-700 mb-6">
+          Entra con tu Google
+        </p>
+
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full bg-white text-rose-600 py-4 rounded-full text-xl font-bold"
+        >
+          Continuar con Google
+        </button>
+
+        {errorMsg && (
+          <p className="text-red-600 mt-4">
+            {errorMsg}
           </p>
-          <p className="text-lg text-gray-700">
-            Sesión activa. ¡Ahora agregamos los contadores y regalos! 💑
-          </p>
-        </div>
-      ) : (
-        <div>
-          <button
-            onClick={handleLogin}
-            className="bg-white text-rose-600 px-10 py-5 rounded-full text-2xl font-bold shadow-xl hover:bg-rose-50 transition transform hover:scale-105"
-          >
-            Entrar con Google
-          </button>
-          <p className="text-white mt-6 text-lg">
-            Toca y elige tu cuenta Google 💖
-          </p>
-          {errorMsg && (
-            <p className="text-red-300 mt-4 text-lg">{errorMsg}</p>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
