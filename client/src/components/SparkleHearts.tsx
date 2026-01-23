@@ -1,16 +1,17 @@
-export default function HeartAnimation() {
+export default function SparkleHearts() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       {[...Array(20)].map((_, i) => (
         <span
           key={i}
-          className="absolute bottom-0 text-pink-300 text-2xl animate-float"
+          className="absolute text-pink-400 animate-float"
           style={{
             left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 5}s`,
+            fontSize: `${10 + Math.random() * 18}px`,
+            animationDelay: `${i * 0.6}s`,
           }}
         >
-          💖
+          ✨❤️
         </span>
       ))}
     </div>

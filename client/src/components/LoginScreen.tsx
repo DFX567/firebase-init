@@ -1,34 +1,23 @@
 import { motion } from "framer-motion";
+import StarField from "./StarField";
 
 interface Props {
   onLogin: () => void;
-  errorMsg: string | null;
+  error: string | null;
 }
 
-export default function LoginScreen({ onLogin, errorMsg }: Props) {
+export default function LoginScreen({ onLogin, error }: Props) {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#020617] to-black flex items-center justify-center px-6">
       
       {/* Estrellas */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(40)].map((_, i) => (
-          <span
-            key={i}
-            className="absolute w-1 h-1 bg-white/70 rounded-full animate-pulse"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${2 + Math.random() * 3}s`,
-            }}
-          />
-        ))}
-      </div>
+      <StarField count={45} />
 
       {/* Tarjeta */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
         className="relative z-10 bg-white/10 backdrop-blur-xl p-10 rounded-3xl shadow-2xl max-w-md w-full text-center border border-white/20"
       >
         <h1 className="text-4xl font-bold text-white mb-6">
@@ -39,16 +28,18 @@ export default function LoginScreen({ onLogin, errorMsg }: Props) {
           Este lugar existe solo para nosotros dos
         </p>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.96 }}
           onClick={onLogin}
-          className="w-full bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-full text-xl font-bold shadow-lg transition transform hover:scale-105"
+          className="w-full bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-full text-xl font-bold shadow-lg transition"
         >
           Entrar con Google
-        </button>
+        </motion.button>
 
-        {errorMsg && (
+        {error && (
           <p className="text-red-300 mt-6 text-sm">
-            {errorMsg}
+            {error}
           </p>
         )}
       </motion.div>
