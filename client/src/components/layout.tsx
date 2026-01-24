@@ -1,13 +1,30 @@
-import { useAuth, signInWithGoogle, signOut } from "@/lib/firebase";
+import { useAuth } from "@/hooks/use-auth";
+import { signInWithGoogle, signOut } from "@/lib/firebase";
 import { LogIn, LogOut, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/40">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2 group cursor-pointer transition-transform active:scale-95">
@@ -35,7 +52,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       />
                     )}
                     <button
-                      onClick={() => signOut()}
+                      onClick={handleSignOut}
                       className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                       title="Sign Out"
                     >
@@ -44,7 +61,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   </div>
                 ) : (
                   <button
-                    onClick={signInWithGoogle}
+                    onClick={handleSignIn}
                     className="flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm bg-foreground text-background hover:bg-foreground/90 transition-all active:scale-95"
                   >
                     <LogIn className="w-4 h-4" />

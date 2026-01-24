@@ -1,26 +1,56 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export function useTypewriter(text: string, speed: number) {
-  const [output, setOutput] = useState("");
-  const [done, setDone] = useState(false);
+export function useTypewriter(text: string, initialSpeed: number = 35) {
+  const [display, setDisplay] = useState("");
+  const index = useRef(0);
+  const speed = useRef(initialSpeed);
+  const finished = useRef(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    let index = 0;
-    setOutput("");
-    setDone(false);
+    setDisplay("");
+    index.current = 0;
+    finished.current = false;
 
-    const interval = setInterval(() => {
-      index++;
-      setOutput(text.slice(0, index));
-
-      if (index >= text.length) {
-        clearInterval(interval);
-        setDone(true);
+    intervalRef.current = setInterval(() => {
+      if (index.current >= text.length) {
+        finished.current = true;
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        return;
       }
-    }, 45 / speed);
 
-    return () => clearInterval(interval);
-  }, [text, speed]);
+      setDisplay((prev) => prev + text[index.current]);
+      index.current++;
+    }, speed.current);
 
-  return { output, done, setOutput };
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [text]);
+
+  const speedUp = () => {
+    speed.current = 10;
+  };
+
+  const skip = () => {
+    if (!finished.current) {
+      finished.current = true;
+      setDisplay(text);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }
+  };
+
+  return {
+    display,
+    text: display,
+    speedUp,
+    skip,
+    done: finished.current,
+  };
 }

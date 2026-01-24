@@ -1,41 +1,38 @@
+// src/App.tsx
 import { useEffect, useState } from "react";
-import { auth } from "./firebase";
+import { auth } from "@/lib/firebase";
 import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
   signOut,
+  type User,
 } from "firebase/auth";
 
-import LoginScreen from "./components/LoginScreen";
-import Hub from "./pages/Hub";
+import LoginScreen from "@/components/LoginScreen";
+import Hub from "@/pages/Hub";
+import NotFound from "@/pages/NotFound";
 
-import AnniversaryRouter from "./sections/anniversary/AnniversaryRouter";
-import CumpleRouter from "./sections/cumple/CumpleRouter";
-import SanValentinRouter from "./sections/sanvalentin/SanValentinRouter";
-
-/* ===============================
-   Correos permitidos
-================================ */
-const ALLOWED_EMAILS = [
-  "dfx1mas87@gmail.com",
-  "lfbecerraaponte@gmail.com",
-];
+import AnniversaryRouter from "@/pages/Anniversary/AnniversaryRouter";
+import CumpleRouter from "@/pages/Cumple/CumpleRouter";
+import SanValentinRouter from "@/pages/San Valentin/SanValentinRouter";
 
 type Section = "hub" | "anniversary" | "cumple" | "sanvalentin";
 
 export default function App() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [section, setSection] = useState<Section>("hub");
   const [error, setError] = useState<string | null>(null);
 
   /* ===============================
-     Auth listener
+     Auth listener - TEMPORAL: permite cualquier usuario logueado
   ================================ */
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      if (u && ALLOWED_EMAILS.includes(u.email ?? "")) {
+      // Comentamos la validación de emails para acceso temporal
+      // if (u && ALLOWED_EMAILS.includes(u.email ?? "")) {
+      if (u) {  // ← Cualquier usuario autenticado entra
         setUser(u);
       } else {
         setUser(null);
@@ -47,7 +44,7 @@ export default function App() {
   }, []);
 
   /* ===============================
-     Login
+     Login - TEMPORAL: sin rechazo por email
   ================================ */
   const handleGoogleLogin = async () => {
     try {
@@ -55,31 +52,42 @@ export default function App() {
       const provider = new GoogleAuthProvider();
       const res = await signInWithPopup(auth, provider);
 
-      if (!ALLOWED_EMAILS.includes(res.user.email ?? "")) {
-        await signOut(auth);
-        setError("Este acceso es privado 💜");
-      }
-    } catch {
+      // Comentamos el bloque de rechazo para permitir cualquier email temporalmente
+      // if (!ALLOWED_EMAILS.includes(res.user.email ?? "")) {
+      //   await signOut(auth);
+      //   setError("Este sitio es privado");
+      // }
+      
+      // No hacemos signOut ni error → deja entrar
+    } catch (err) {
+      console.error(err);
       setError("Error al iniciar sesión");
     }
   };
 
   /* ===============================
-     Logout
+     Logout (sin cambios)
   ================================ */
   const handleLogout = async () => {
-    await signOut(auth);
-    setUser(null);
-    setSection("hub");
+    try {
+      await signOut(auth);
+      setUser(null);
+      setSection("hub");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   /* ===============================
-     Loading
+     Loading (sin cambios)
   ================================ */
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        Cargando…
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-lg">Cargando...</p>
+        </div>
       </div>
     );
   }
@@ -92,33 +100,22 @@ export default function App() {
   }
 
   /* ===============================
-     SECTIONS
+     SECTIONS (sin cambios)
   ================================ */
   if (section === "anniversary") {
-    return (
-      <AnniversaryRouter onBackHome={() => setSection("hub")} />
-    );
+    return <AnniversaryRouter onBack={() => setSection("hub")} />;
   }
 
   if (section === "cumple") {
-    return (
-      <CumpleRouter onBackHome={() => setSection("hub")} />
-    );
+    return <CumpleRouter onBack={() => setSection("hub")} />;
   }
 
   if (section === "sanvalentin") {
-    return (
-      <SanValentinRouter onBackHome={() => setSection("hub")} />
-    );
+    return <SanValentinRouter onBack={() => setSection("hub")} />;
   }
 
   /* ===============================
      HUB
   ================================ */
-  return (
-    <Hub
-      onSelect={setSection}
-      onLogout={handleLogout}
-    />
-  );
+  return <Hub onSelect={setSection} onLogout={handleLogout} user={user} />;
 }
