@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, Cake, Calendar, LogOut, Sparkles } from "lucide-react";
 import StarField from "@/components/StarField";
 import Planet3D from "@/components/animations/Planet3D";
+import SecretMenu from "@/components/SecretMenu";
 import type { User } from "firebase/auth";
 
 interface HubProps {
@@ -11,6 +13,8 @@ interface HubProps {
 }
 
 export default function Hub({ onSelect, onLogout, user }: HubProps) {
+  const [secretMode, setSecretMode] = useState(false);
+
   const sections = [
     {
       id: "sanvalentin" as const,
@@ -253,6 +257,21 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
           </p>
         </motion.div>
       </div>
+
+      <SecretMenu onUnlock={() => setSecretMode(true)} />
+
+      {secretMode && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="fixed bottom-20 right-6 bg-gradient-to-br from-purple-600/90 to-pink-600/90 backdrop-blur-xl rounded-2xl p-4 border border-white/20 shadow-2xl z-50"
+        >
+          <p className="text-white text-sm font-medium flex items-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            Modo secreto activado
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 }

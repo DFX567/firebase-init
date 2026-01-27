@@ -1,5 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
-import { signInWithGoogle, signOut } from "@/lib/firebase";
+import { signInWithGoogle } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { LogIn, LogOut, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
 
