@@ -55,10 +55,10 @@ function useYearCountdown(month: number, day: number, year: number) {
 }
 
 export default function CumpleHome({ onBack, onViewLetter, onViewGifts, onViewGame }: CumpleHomeProps) {
-  const [year, setYear] = useState(2025);
+  const [year, setYear] = useState(2024);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const data = cumpleData[year];
-  const countdown = useYearCountdown(2, 14, year);
+  const countdown = useYearCountdown(12, 19, year);
 
   return (
     <PageTransition pageKey="cumple-home" variant="slide">

@@ -11,11 +11,11 @@ import {
 
 import LoginScreen from "@/components/LoginScreen";
 import Hub from "@/pages/Hub";
-import NotFound from "@/pages/NotFound";
 
 import AnniversaryRouter from "@/pages/Anniversary/AnniversaryRouter";
 import CumpleRouter from "@/pages/Cumple/CumpleRouter";
 import SanValentinRouter from "@/pages/San Valentin/SanValentinRouter";
+import AmorAmistadRouter from "@/pages/Amor y Amistad/AmorAmistadRouter";
 
 /* ===============================
    Correos permitidos
@@ -25,7 +25,7 @@ const ALLOWED_EMAILS = [
   "lfbecerraaponte@gmail.com",
 ];
 
-type Section = "hub" | "anniversary" | "cumple" | "sanvalentin";
+type Section = "hub" | "anniversary" | "cumple" | "sanvalentin" | "amoramistad";
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -64,7 +64,7 @@ export default function App() {
       }
     } catch (err) {
       console.error(err);
-      setError("Error al iniciar sesión");
+      setError("Error al iniciar sesion");
     }
   };
 
@@ -115,6 +115,10 @@ export default function App() {
 
   if (section === "sanvalentin") {
     return <SanValentinRouter onBack={() => setSection("hub")} />;
+  }
+
+  if (section === "amoramistad") {
+    return <AmorAmistadRouter onBack={() => setSection("hub")} />;
   }
 
   /* ===============================

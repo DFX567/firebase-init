@@ -54,10 +54,10 @@ function useYearCountdown(month: number, day: number, year: number) {
 }
 
 export default function AnniversaryHome({ onBack, onViewLetter, onViewGallery, onViewGame }: AnniversaryHomeProps) {
-  const [year, setYear] = useState(2025);
+  const [year, setYear] = useState(2024);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const data = anniversaryData[year];
-  const countdown = useYearCountdown(6, 10, year);
+  const countdown = useYearCountdown(11, 2, year);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
