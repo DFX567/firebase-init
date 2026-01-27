@@ -289,3 +289,183 @@
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
+root {
+  /* San Valentín */
+  --valentine-primary: #ff6b9d;
+  --valentine-secondary: #ffc2d1;
+  --valentine-bg: linear-gradient(135deg, #fff0f5 0%, #ffe4e9 100%);
+  
+  /* Cumpleaños */
+  --birthday-primary: #a78bfa;
+  --birthday-secondary: #c4b5fd;
+  --birthday-bg: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  
+  /* Aniversario */
+  --anniversary-primary: #ec4899;
+  --anniversary-secondary: #f9a8d4;
+  --anniversary-bg: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+  
+  /* Hub */
+  --hub-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+}
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mejora de glassmorphism */
+.glass-enhanced {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Card hover effect mejorado */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient-text {
+  background: linear-gradient(
+    90deg,
+    #ff6b9d,
+    #c084fc,
+    #f472b6,
+    #ff6b9d
+  );
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Improved button transitions */
+button {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Soft shadow utilities */
+.shadow-soft {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.shadow-soft-lg {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+/* Improved focus states */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 3px;
+}
+/* Animación lenta optimizada para planetas */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 60s linear infinite;
+  will-change: transform;
+}
+
+/* Hardware acceleration */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reducir blur en elementos animados */
+.optimized-blur {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+/* Smooth scroll */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimizar blur en backdrop */
+@supports (backdrop-filter: blur(10px)) {
+  .backdrop-blur-xl {
+    backdrop-filter: blur(16px);
+  }
+  
+  .backdrop-blur-2xl {
+    backdrop-filter: blur(20px);
+  }
+}
+
+/* Reducir motion para usuarios que lo prefieran */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimización de imágenes y componentes pesados */
+img, video {
+  will-change: auto;
+}
+
+/* Mejorar rendimiento de animaciones */
+.animate-spin-slow,
+[class*="animate-"] {
+  will-change: transform;
+}
+
+/* Después de la animación, remover will-change */
+.animated-once {
+  will-change: auto !important;
+}

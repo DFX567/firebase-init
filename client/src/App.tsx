@@ -17,6 +17,14 @@ import AnniversaryRouter from "@/pages/Anniversary/AnniversaryRouter";
 import CumpleRouter from "@/pages/Cumple/CumpleRouter";
 import SanValentinRouter from "@/pages/San Valentin/SanValentinRouter";
 
+/* ===============================
+   Correos permitidos
+================================ */
+const ALLOWED_EMAILS = [
+  "dfx1mas87@gmail.com",
+  "lfbecerraaponte@gmail.com",
+];
+
 type Section = "hub" | "anniversary" | "cumple" | "sanvalentin";
 
 export default function App() {
@@ -26,13 +34,11 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   /* ===============================
-     Auth listener - TEMPORAL: permite cualquier usuario logueado
+     Auth listener
   ================================ */
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      // Comentamos la validación de emails para acceso temporal
-      // if (u && ALLOWED_EMAILS.includes(u.email ?? "")) {
-      if (u) {  // ← Cualquier usuario autenticado entra
+      if (u && ALLOWED_EMAILS.includes(u.email ?? "")) {
         setUser(u);
       } else {
         setUser(null);
@@ -44,7 +50,7 @@ export default function App() {
   }, []);
 
   /* ===============================
-     Login - TEMPORAL: sin rechazo por email
+     Login
   ================================ */
   const handleGoogleLogin = async () => {
     try {
@@ -52,13 +58,10 @@ export default function App() {
       const provider = new GoogleAuthProvider();
       const res = await signInWithPopup(auth, provider);
 
-      // Comentamos el bloque de rechazo para permitir cualquier email temporalmente
-      // if (!ALLOWED_EMAILS.includes(res.user.email ?? "")) {
-      //   await signOut(auth);
-      //   setError("Este sitio es privado");
-      // }
-      
-      // No hacemos signOut ni error → deja entrar
+      if (!ALLOWED_EMAILS.includes(res.user.email ?? "")) {
+        await signOut(auth);
+        setError("Este sitio es privado");
+      }
     } catch (err) {
       console.error(err);
       setError("Error al iniciar sesión");
@@ -66,7 +69,7 @@ export default function App() {
   };
 
   /* ===============================
-     Logout (sin cambios)
+     Logout
   ================================ */
   const handleLogout = async () => {
     try {
@@ -79,7 +82,7 @@ export default function App() {
   };
 
   /* ===============================
-     Loading (sin cambios)
+     Loading
   ================================ */
   if (loading) {
     return (
@@ -100,7 +103,7 @@ export default function App() {
   }
 
   /* ===============================
-     SECTIONS (sin cambios)
+     SECTIONS
   ================================ */
   if (section === "anniversary") {
     return <AnniversaryRouter onBack={() => setSection("hub")} />;

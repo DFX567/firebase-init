@@ -2,42 +2,36 @@ import { useState } from "react";
 import SanValentinHome from "./SanValentinHome";
 import ValentineLetter from "./ValentineLetter";
 import ValentinePoem from "./ValentinePoem";
+import CupidGame from "./CupidGame";
 
-type View = "home" | "letter" | "poem";
+interface SanValentinRouterProps {
+  onBack: () => void;
+}
 
-export default function SanValentinRouter({ onBack }: { onBack: () => void }) {
-  const [view, setView] = useState<View>("home");
-  const [selectedYear, setSelectedYear] = useState(2025);
+type View = 'home' | 'letter' | 'poem' | 'game';
 
-  if (view === "letter") {
-    return (
-      <ValentineLetter
-        year={selectedYear}
-        onBack={() => setView("home")}
-      />
-    );
+export default function SanValentinRouter({ onBack }: SanValentinRouterProps) {
+  const [view, setView] = useState<View>('home');
+  const [year, setYear] = useState(2025);
+
+  if (view === 'letter') {
+    return <ValentineLetter year={year} onBack={() => setView('home')} />;
   }
 
-  if (view === "poem") {
-    return (
-      <ValentinePoem
-        year={selectedYear}
-        onBack={() => setView("home")}
-      />
-    );
+  if (view === 'poem') {
+    return <ValentinePoem year={year} onBack={() => setView('home')} />;
+  }
+
+  if (view === 'game') {
+    return <CupidGame onBack={() => setView('home')} />;
   }
 
   return (
-    <SanValentinHome
-      onBack={onBack}
-      onViewLetter={(year) => {
-        setSelectedYear(year);
-        setView("letter");
-      }}
-      onViewPoem={(year) => {
-        setSelectedYear(year);
-        setView("poem");
-      }}
+    <SanValentinHome 
+      onBack={onBack} 
+      onViewLetter={(y) => { setYear(y); setView('letter'); }}
+      onViewPoem={(y) => { setYear(y); setView('poem'); }}
+      onViewGame={() => setView('game')}
     />
   );
 }

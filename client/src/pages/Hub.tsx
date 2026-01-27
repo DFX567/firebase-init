@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { Heart, Cake, Calendar, LogOut } from "lucide-react";
+import { Heart, Cake, Calendar, LogOut, Sparkles } from "lucide-react";
 import StarField from "@/components/StarField";
+import Planet3D from "@/components/animations/Planet3D";
 import type { User } from "firebase/auth";
 
 interface HubProps {
@@ -15,120 +16,242 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
       id: "sanvalentin" as const,
       title: "San Valentín",
       icon: Heart,
-      gradient: "from-rose-500 to-pink-600",
-      emoji: "❤️",
-      description: "Celebrando nuestro amor"
+      gradient: "from-rose-400 via-pink-400 to-rose-500",
+      bgGlow: "bg-rose-500/20",
+      emoji: "💕",
+      description: "Celebrando nuestro amor",
+      delay: 0.2
     },
     {
       id: "cumple" as const,
       title: "Cumpleaños",
       icon: Cake,
-      gradient: "from-purple-500 to-indigo-600",
+      gradient: "from-violet-400 via-purple-400 to-indigo-500",
+      bgGlow: "bg-purple-500/20",
       emoji: "🎂",
-      description: "Tu día especial"
+      description: "Tu día especial",
+      delay: 0.3
     },
     {
       id: "anniversary" as const,
       title: "Aniversario",
       icon: Calendar,
-      gradient: "from-pink-500 to-rose-600",
+      gradient: "from-pink-400 via-rose-400 to-pink-500",
+      bgGlow: "bg-pink-500/20",
       emoji: "💍",
-      description: "Nuestros momentos juntos"
+      description: "Nuestros momentos juntos",
+      delay: 0.4
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white relative overflow-hidden">
-      <StarField count={80} />
+    <div className="min-h-screen relative overflow-hidden bg-black">
+      {/* Fondo espacial con estrellas - Más visible */}
+      <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/70 via-purple-950/50 to-black">
+        <StarField count={200} />
+      </div>
+
+      {/* Nebulosa de fondo - Estáticas para mejor rendimiento */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-1/2 -left-1/4 w-[800px] h-[800px] bg-purple-600/20 rounded-full blur-[100px]" />
+        <div className="absolute -bottom-1/2 -right-1/4 w-[1000px] h-[1000px] bg-pink-600/15 rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 left-1/2 w-[700px] h-[700px] bg-indigo-600/18 rounded-full blur-[110px]" />
+      </div>
+
+      {/* Planetas 3D realistas mejorados */}
+      <Planet3D 
+        size={550} 
+        position={{ x: "12%", y: "35%" }}
+        colors={["#a78bfa", "#8b5cf6", "#6366f1"]}
+        rotationSpeed={100}
+        type="gas"
+      />
+      <Planet3D 
+        size={380} 
+        position={{ x: "88%", y: "70%" }}
+        colors={["#ec4899", "#f472b6", "#fb923c"]}
+        rotationSpeed={120}
+        type="rocky"
+      />
 
       {/* Header */}
-      <div className="relative z-10 pt-8 px-6">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            {user.photoURL && (
-              <img
-                src={user.photoURL}
-                alt={user.displayName || "User"}
-                className="w-10 h-10 rounded-full border-2 border-white/20"
-              />
-            )}
-            <div>
-              <p className="text-sm text-white/60">Bienvenido/a</p>
-              <p className="font-semibold">{user.displayName?.split(" ")[0]}</p>
-            </div>
-          </div>
-
-          <button
-            onClick={onLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition backdrop-blur-sm"
+      <div className="relative z-10 pt-6 px-6">
+        <div className="max-w-6xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-between items-center bg-white/5 backdrop-blur-2xl rounded-2xl p-4 border border-white/10 shadow-2xl"
           >
-            <LogOut className="w-4 h-4" />
-            <span className="text-sm">Salir</span>
-          </button>
+            <div className="flex items-center gap-4">
+              {user.photoURL && (
+                <motion.img
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  src={user.photoURL}
+                  alt={user.displayName || "User"}
+                  className="w-12 h-12 rounded-full border-2 border-purple-400/50 shadow-lg shadow-purple-500/30"
+                />
+              )}
+              <div>
+                <p className="text-xs text-purple-300/70 font-medium tracking-wide uppercase">Bienvenido/a</p>
+                <p className="font-bold text-lg text-white">{user.displayName?.split(" ")[0]}</p>
+              </div>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onLogout}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all backdrop-blur-sm border border-white/10 hover:border-white/20 shadow-lg"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="text-sm font-medium">Salir</span>
+            </motion.button>
+          </motion.div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-6">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-140px)] px-6 py-12">
+
+        {/* Título principal */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-16 relative"
         >
-          <h1 className="text-6xl md:text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-300 via-purple-300 to-indigo-300">
-            Nuestro Refugio
-          </h1>
-          <p className="text-xl text-white/70">
-            Un lugar especial solo para nosotros 💫
-          </p>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-full blur-2xl"
+          />
+
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center justify-center gap-3 mb-4"
+          >
+            <Sparkles className="w-8 h-8 text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]" />
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-200 via-purple-200 to-indigo-200 tracking-tight drop-shadow-2xl">
+              Nuestro Refugio
+            </h1>
+            <Sparkles className="w-8 h-8 text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]" />
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-xl md:text-2xl text-purple-200/70 font-light tracking-wide"
+          >
+            Un universo especial solo para nosotros 💫
+          </motion.p>
         </motion.div>
 
-        {/* Section Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
-          {sections.map((section, index) => {
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">
+          {sections.map((section) => {
             const Icon = section.icon;
             return (
-              <motion.button
+              <motion.div
                 key={section.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 + 0.2 }}
-                onClick={() => onSelect(section.id)}
-                className="group relative overflow-hidden rounded-3xl p-8 bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10"
+                transition={{ 
+                  delay: section.delay,
+                  duration: 0.8,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
               >
-                {/* Gradient Background */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${section.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                />
+                <motion.button
+                  onClick={() => onSelect(section.id)}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group relative w-full overflow-hidden rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/10 hover:border-white/30 transition-all duration-500 shadow-2xl hover:shadow-pink-500/20"
+                >
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    className={`absolute inset-0 bg-gradient-to-br ${section.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+                  />
 
-                {/* Content */}
-                <div className="relative z-10 flex flex-col items-center gap-4">
-                  <div className="text-5xl">{section.emoji}</div>
-                  <Icon className="w-8 h-8 text-white/70 group-hover:text-white transition" />
-                  <h3 className="text-2xl font-bold">{section.title}</h3>
-                  <p className="text-sm text-white/60 group-hover:text-white/80 transition">
-                    {section.description}
-                  </p>
-                </div>
+                  <div className={`absolute -inset-1 ${section.bgGlow} rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10`} />
 
-                {/* Shine Effect */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                </div>
-              </motion.button>
+                  <div className="relative p-10 flex flex-col items-center gap-6">
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{ 
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="text-7xl mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                    >
+                      {section.emoji}
+                    </motion.div>
+
+                    <div className="relative">
+                      <motion.div
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.6 }}
+                        className={`p-4 rounded-2xl bg-gradient-to-br ${section.gradient} shadow-lg`}
+                      >
+                        <Icon className="w-8 h-8 text-white" />
+                      </motion.div>
+                    </div>
+
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold mb-2 group-hover:text-white transition-colors">
+                        {section.title}
+                      </h3>
+                      <p className="text-sm text-white/50 group-hover:text-white/70 transition-colors">
+                        {section.description}
+                      </p>
+                    </div>
+
+                    <motion.div
+                      initial={{ x: 0 }}
+                      whileHover={{ x: 5 }}
+                      className="text-white/30 group-hover:text-white/60 transition-colors text-xl"
+                    >
+                      →
+                    </motion.div>
+                  </div>
+
+                  <motion.div
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: "100%" }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  />
+                </motion.button>
+              </motion.div>
             );
           })}
         </div>
 
-        {/* Footer Message */}
-        <motion.p
+        {/* Footer */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="mt-16 text-white/50 text-center text-sm"
+          className="mt-20 text-center"
         >
-          Hecho con amor 💜
-        </motion.p>
+          <p className="text-purple-300/40 text-sm flex items-center justify-center gap-2">
+            Hecho con
+            <motion.span
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            >
+              💜
+            </motion.span>
+            para nosotros
+          </p>
+        </motion.div>
       </div>
     </div>
   );

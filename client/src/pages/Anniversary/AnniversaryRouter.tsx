@@ -1,29 +1,37 @@
 import { useState } from "react";
 import AnniversaryHome from "./AnniversaryHome";
 import LoveLetter from "./LoveLetter";
+import PhotoGallery from "./PhotoGallery";
+import MemoryGame from "./MemoryGame";
 
-type View = "home" | "letter" | "poem";
+interface AnniversaryRouterProps {
+  onBack: () => void;
+}
 
-export default function AnniversaryRouter({ onBack }: { onBack: () => void }) {
-  const [view, setView] = useState<View>("home");
-  const [selectedYear, setSelectedYear] = useState(2025);
+type View = 'home' | 'letter' | 'gallery' | 'game';
 
-  if (view === "letter") {
-    return (
-      <LoveLetter
-        year={selectedYear}
-        onBack={() => setView("home")}
-      />
-    );
+export default function AnniversaryRouter({ onBack }: AnniversaryRouterProps) {
+  const [view, setView] = useState<View>('home');
+  const [year, setYear] = useState(2025);
+
+  if (view === 'letter') {
+    return <LoveLetter year={year} onBack={() => setView('home')} />;
+  }
+
+  if (view === 'gallery') {
+    return <PhotoGallery year={year} onBack={() => setView('home')} />;
+  }
+
+  if (view === 'game') {
+    return <MemoryGame onBack={() => setView('home')} />;
   }
 
   return (
-    <AnniversaryHome
-      onBack={onBack}
-      onViewLetter={(year) => {
-        setSelectedYear(year);
-        setView("letter");
-      }}
+    <AnniversaryHome 
+      onBack={onBack} 
+      onViewLetter={(y) => { setYear(y); setView('letter'); }}
+      onViewGallery={(y) => { setYear(y); setView('gallery'); }}
+      onViewGame={() => setView('game')}
     />
   );
 }

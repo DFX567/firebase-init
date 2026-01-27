@@ -1,30 +1,37 @@
 import { useState } from "react";
 import CumpleHome from "./CumpleHome";
 import BirthdayLetter from "./BirthdayLetter";
+import BirthdayGifts from "./BirthdayGifts";
+import CatchGame from "./CatchGame";
 
-type View = "home" | "letter";
+interface CumpleRouterProps {
+  onBack: () => void;
+}
 
-export default function CumpleRouter({ onBack }: { onBack: () => void }) {
-  const [view, setView] = useState<View>("home");
-  const [selectedYear, setSelectedYear] = useState(2025);
+type View = 'home' | 'letter' | 'gifts' | 'game';
 
-  if (view === "letter") {
-    return (
-      <BirthdayLetter
-        year={selectedYear}
-        onBack={() => setView("home")}
-      />
-    );
+export default function CumpleRouter({ onBack }: CumpleRouterProps) {
+  const [view, setView] = useState<View>('home');
+  const [year, setYear] = useState(2025);
+
+  if (view === 'letter') {
+    return <BirthdayLetter year={year} onBack={() => setView('home')} />;
+  }
+
+  if (view === 'gifts') {
+    return <BirthdayGifts year={year} onBack={() => setView('home')} />;
+  }
+
+  if (view === 'game') {
+    return <CatchGame onBack={() => setView('home')} />;
   }
 
   return (
-    <CumpleHome
-      onBack={onBack}
-      onViewLetter={(year) => {
-        setSelectedYear(year);
-        setView("letter");
-      }}
+    <CumpleHome 
+      onBack={onBack} 
+      onViewLetter={(y) => { setYear(y); setView('letter'); }}
+      onViewGifts={(y) => { setYear(y); setView('gifts'); }}
+      onViewGame={() => setView('game')}
     />
   );
 }
-
