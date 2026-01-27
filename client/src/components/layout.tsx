@@ -18,7 +18,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await signOut(auth);
     } catch (error) {
       console.error("Error signing out:", error);
     }
