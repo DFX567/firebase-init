@@ -2,13 +2,14 @@ import { useState } from "react";
 import SanValentinHome from "./SanValentinHome";
 import ValentineLetter from "./ValentineLetter";
 import ValentinePoem from "./ValentinePoem";
-import CupidGame from "./CupidGame";
+import LoveQuiz from "./games/LoveQuiz";
+import MemoryHearts from "./games/MemoryHearts";
 
 interface SanValentinRouterProps {
   onBack: () => void;
 }
 
-type View = 'home' | 'letter' | 'poem' | 'game';
+type View = 'home' | 'letter' | 'poem' | 'quiz' | 'memory';
 
 export default function SanValentinRouter({ onBack }: SanValentinRouterProps) {
   const [view, setView] = useState<View>('home');
@@ -22,8 +23,12 @@ export default function SanValentinRouter({ onBack }: SanValentinRouterProps) {
     return <ValentinePoem year={year} onBack={() => setView('home')} />;
   }
 
-  if (view === 'game') {
-    return <CupidGame onBack={() => setView('home')} />;
+  if (view === 'quiz') {
+    return <LoveQuiz onBack={() => setView('home')} />;
+  }
+
+  if (view === 'memory') {
+    return <MemoryHearts onBack={() => setView('home')} />;
   }
 
   return (
@@ -31,7 +36,8 @@ export default function SanValentinRouter({ onBack }: SanValentinRouterProps) {
       onBack={onBack} 
       onViewLetter={(y) => { setYear(y); setView('letter'); }}
       onViewPoem={(y) => { setYear(y); setView('poem'); }}
-      onViewGame={() => setView('game')}
+      onViewQuiz={() => setView('quiz')}
+      onViewMemory={() => setView('memory')}
     />
   );
 }
