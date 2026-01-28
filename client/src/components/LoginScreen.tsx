@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { LogIn, Heart, Sparkles } from "lucide-react";
-import ShootingStars from "@/components/animations/ShootingStars";
 
 interface LoginScreenProps {
   onLogin: () => Promise<void>;
@@ -24,8 +23,6 @@ export default function LoginScreen({ onLogin, error }: LoginScreenProps) {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-violet-950 via-purple-900 to-rose-950 flex items-center justify-center px-6">
-      {/* Shooting Stars Background */}
-      <ShootingStars count={40} />
 
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

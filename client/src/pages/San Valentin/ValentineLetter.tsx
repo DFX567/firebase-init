@@ -3,7 +3,6 @@ import { useTypewriter } from "@/hooks/useTypewriter";
 import { sanValentinContent } from "@/data/events";
 import { ArrowLeft, FastForward, SkipForward, Heart, Sparkles } from "lucide-react";
 import FloatingHearts from "@/components/animations/FloatingHearts";
-import SparkleEffect from "@/components/animations/SparkleEffect";
 import Planet3D from "@/components/animations/Planet3D";
 
 interface ValentineLetterProps {
@@ -18,15 +17,20 @@ export default function ValentineLetter({ year, onBack }: ValentineLetterProps) 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
       <div className="absolute inset-0 bg-gradient-to-br from-rose-950/95 via-red-900/90 to-pink-950/95">
-        <FloatingHearts count={40} />
+        <FloatingHearts count={10} />
       </div>
 
-      <SparkleEffect />
-
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-80 h-80 bg-rose-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-0 w-64 h-64 bg-red-500/10 rounded-full blur-3xl" />
+        <motion.div 
+          animate={{ opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 4, repeat: Infinity }}
+          className="absolute top-0 left-1/4 w-80 h-80 bg-rose-500/20 rounded-full blur-3xl" 
+        />
+        <motion.div 
+          animate={{ opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl" 
+        />
       </div>
 
       <Planet3D 
@@ -36,29 +40,6 @@ export default function ValentineLetter({ year, onBack }: ValentineLetterProps) 
         rotationSpeed={80}
         type="moon"
       />
-
-      {[...Array(12)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute text-3xl md:text-4xl opacity-20 pointer-events-none"
-          initial={{ 
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-            y: (typeof window !== 'undefined' ? window.innerHeight : 1000) + 100
-          }}
-          animate={{
-            y: -100,
-            x: `+=${Math.sin(i) * 50}`,
-            rotate: [0, 360]
-          }}
-          transition={{
-            duration: Math.random() * 20 + 25,
-            repeat: Infinity,
-            delay: Math.random() * 8
-          }}
-        >
-          {['💕', '💗', '💖', '💘', '💝'][i % 5]}
-        </motion.div>
-      ))}
 
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-8">
         <motion.button

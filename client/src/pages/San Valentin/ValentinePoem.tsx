@@ -3,7 +3,6 @@ import { useTypewriter } from "@/hooks/useTypewriter";
 import { sanValentinContent } from "@/data/events";
 import { ArrowLeft, FastForward, SkipForward, Heart, Sparkles, BookOpen } from "lucide-react";
 import FloatingHearts from "@/components/animations/FloatingHearts";
-import SparkleEffect from "@/components/animations/SparkleEffect";
 import Planet3D from "@/components/animations/Planet3D";
 
 interface ValentinePoemProps {
@@ -18,18 +17,19 @@ export default function ValentinePoem({ year, onBack }: ValentinePoemProps) {
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
       <div className="absolute inset-0 bg-gradient-to-br from-purple-950/95 via-rose-900/90 to-pink-950/95">
-        <FloatingHearts count={30} />
+        <FloatingHearts count={10} />
       </div>
 
-      <SparkleEffect />
-
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-0 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-rose-500/15 rounded-full blur-3xl" />
         <motion.div 
           animate={{ opacity: [0.1, 0.2, 0.1] }}
           transition={{ duration: 4, repeat: Infinity }}
-          className="absolute top-0 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"
+          className="absolute top-1/4 right-0 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl" 
+        />
+        <motion.div 
+          animate={{ opacity: [0.1, 0.15, 0.1] }}
+          transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+          className="absolute bottom-1/4 left-0 w-80 h-80 bg-rose-500/15 rounded-full blur-3xl" 
         />
       </div>
 
@@ -40,26 +40,6 @@ export default function ValentinePoem({ year, onBack }: ValentinePoemProps) {
         rotationSpeed={120}
         type="gas"
       />
-
-      {[...Array(20)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-white/40 rounded-full pointer-events-none"
-          initial={{ 
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-            y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)
-          }}
-          animate={{
-            opacity: [0.2, 0.8, 0.2],
-            scale: [1, 1.5, 1]
-          }}
-          transition={{
-            duration: Math.random() * 3 + 2,
-            repeat: Infinity,
-            delay: Math.random() * 2
-          }}
-        />
-      ))}
 
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-8">
         <motion.button
