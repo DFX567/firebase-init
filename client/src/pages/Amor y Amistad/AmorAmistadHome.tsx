@@ -9,7 +9,7 @@ interface AmorAmistadHomeProps {
 export default function AmorAmistadHome({ onBack }: AmorAmistadHomeProps) {
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-      <SpaceBackground variant="default" />
+      <SpaceBackground variant="friendship" />
 
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-8">
         <motion.button
@@ -19,10 +19,10 @@ export default function AmorAmistadHome({ onBack }: AmorAmistadHomeProps) {
           whileTap={{ scale: 0.95 }}
           onClick={onBack}
           data-testid="button-back"
-          className="flex items-center gap-2 px-4 md:px-5 py-2.5 md:py-3 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 transition-all backdrop-blur-2xl border border-orange-300/30 shadow-lg"
+          className="flex items-center gap-2 px-4 md:px-5 py-2.5 md:py-3 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 transition-all backdrop-blur-2xl border border-cyan-300/30 shadow-lg"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span className="font-semibold text-orange-100 text-sm md:text-base">Volver al Hub</span>
+          <span className="font-semibold text-cyan-100 text-sm md:text-base">Volver al Hub</span>
         </motion.button>
       </div>
 
@@ -42,9 +42,9 @@ export default function AmorAmistadHome({ onBack }: AmorAmistadHomeProps) {
               <motion.div
                 animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="absolute inset-0 bg-orange-500/30 rounded-full blur-3xl"
+                className="absolute inset-0 bg-cyan-500/30 rounded-full blur-3xl"
               />
-              <Construction className="relative w-24 h-24 md:w-32 md:h-32 text-orange-300" />
+              <Construction className="relative w-24 h-24 md:w-32 md:h-32 text-cyan-300" />
             </div>
           </motion.div>
 
@@ -52,7 +52,7 @@ export default function AmorAmistadHome({ onBack }: AmorAmistadHomeProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-orange-200 via-amber-100 to-orange-200 mb-6"
+            className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-cyan-200 via-teal-100 to-cyan-200 mb-6"
           >
             Amor y Amistad
           </motion.h1>
@@ -61,29 +61,29 @@ export default function AmorAmistadHome({ onBack }: AmorAmistadHomeProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl rounded-3xl p-8 md:p-12 border border-orange-300/20 shadow-2xl"
+            className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl rounded-3xl p-8 md:p-12 border border-cyan-300/20 shadow-2xl"
           >
             <div className="flex items-center justify-center gap-3 mb-6">
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
-                <Heart className="w-8 h-8 text-orange-300 fill-orange-300" />
+                <Heart className="w-8 h-8 text-cyan-300 fill-cyan-300" />
               </motion.div>
-              <Sparkles className="w-6 h-6 text-amber-300" />
+              <Sparkles className="w-6 h-6 text-teal-300" />
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
               >
-                <Heart className="w-8 h-8 text-rose-300 fill-rose-300" />
+                <Heart className="w-8 h-8 text-emerald-300 fill-emerald-300" />
               </motion.div>
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-bold text-orange-100 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-cyan-100 mb-4">
               En desarrollo...
             </h2>
             
-            <p className="text-lg md:text-xl text-orange-200/80 mb-6">
+            <p className="text-lg md:text-xl text-cyan-200/80 mb-6">
               Espera porfavor
             </p>
 
@@ -95,7 +95,7 @@ export default function AmorAmistadHome({ onBack }: AmorAmistadHomeProps) {
               🫶
             </motion.div>
 
-            <p className="text-sm text-orange-200/50 mt-6">
+            <p className="text-sm text-cyan-200/50 mt-6">
               Estamos preparando algo especial para ti
             </p>
           </motion.div>
@@ -106,9 +106,9 @@ export default function AmorAmistadHome({ onBack }: AmorAmistadHomeProps) {
             transition={{ delay: 0.8 }}
             className="mt-8 flex items-center justify-center gap-2"
           >
-            <div className="h-px w-16 bg-gradient-to-r from-transparent via-orange-300/30 to-transparent" />
-            <Sparkles className="w-4 h-4 text-orange-300/50" />
-            <div className="h-px w-16 bg-gradient-to-l from-transparent via-orange-300/30 to-transparent" />
+            <div className="h-px w-16 bg-gradient-to-r from-transparent via-cyan-300/30 to-transparent" />
+            <Sparkles className="w-4 h-4 text-cyan-300/50" />
+            <div className="h-px w-16 bg-gradient-to-l from-transparent via-cyan-300/30 to-transparent" />
           </motion.div>
         </motion.div>
       </div>

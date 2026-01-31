@@ -2,7 +2,7 @@ import { memo, useMemo } from "react";
 import "./SpaceBackground.css";
 
 interface SpaceBackgroundProps {
-  variant?: "default" | "valentine" | "birthday" | "anniversary";
+  variant?: "default" | "valentine" | "birthday" | "anniversary" | "friendship";
 }
 
 function SpaceBackground({ variant = "default" }: SpaceBackgroundProps) {
@@ -27,17 +27,19 @@ function SpaceBackground({ variant = "default" }: SpaceBackgroundProps) {
   }, []);
 
   const gradientColors = {
-    default: "from-indigo-950/80 via-purple-950/60 to-black",
-    valentine: "from-rose-950/80 via-pink-950/60 to-black",
-    birthday: "from-violet-950/80 via-purple-950/60 to-black",
-    anniversary: "from-pink-950/80 via-rose-950/60 to-black",
+    default: "from-indigo-950/90 via-purple-950/80 to-black",
+    valentine: "from-rose-950/90 via-red-950/80 to-black",
+    birthday: "from-violet-950/90 via-purple-950/80 to-black",
+    anniversary: "from-amber-950/90 via-orange-950/80 to-black",
+    friendship: "from-cyan-950/90 via-teal-950/80 to-black",
   };
 
   const glowColors = {
-    default: ["bg-purple-600/15", "bg-pink-600/10", "bg-indigo-600/12"],
-    valentine: ["bg-rose-600/15", "bg-pink-600/12", "bg-red-600/10"],
-    birthday: ["bg-violet-600/15", "bg-purple-600/12", "bg-indigo-600/10"],
-    anniversary: ["bg-pink-600/15", "bg-rose-600/12", "bg-purple-600/10"],
+    default: ["bg-purple-500/20", "bg-indigo-500/15", "bg-violet-500/12"],
+    valentine: ["bg-rose-500/20", "bg-red-500/15", "bg-pink-500/12"],
+    birthday: ["bg-violet-500/20", "bg-purple-500/15", "bg-fuchsia-500/12"],
+    anniversary: ["bg-amber-500/20", "bg-orange-500/15", "bg-yellow-500/12"],
+    friendship: ["bg-cyan-500/20", "bg-teal-500/15", "bg-emerald-500/12"],
   };
 
   const colors = glowColors[variant];
@@ -46,9 +48,9 @@ function SpaceBackground({ variant = "default" }: SpaceBackgroundProps) {
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <div className={`absolute inset-0 bg-gradient-to-b ${gradientColors[variant]}`} />
       
-      <div className={`absolute -top-1/3 -left-1/4 w-[600px] h-[600px] ${colors[0]} rounded-full blur-[80px] space-glow`} />
-      <div className={`absolute -bottom-1/3 -right-1/4 w-[700px] h-[700px] ${colors[1]} rounded-full blur-[100px] space-glow-delay`} />
-      <div className={`absolute top-1/3 left-1/2 w-[500px] h-[500px] ${colors[2]} rounded-full blur-[90px]`} />
+      <div className={`absolute -top-1/3 -left-1/4 w-[600px] h-[600px] ${colors[0]} rounded-full blur-[100px] space-glow`} />
+      <div className={`absolute -bottom-1/3 -right-1/4 w-[700px] h-[700px] ${colors[1]} rounded-full blur-[120px] space-glow-delay`} />
+      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] ${colors[2]} rounded-full blur-[100px]`} />
 
       <div className="absolute inset-0">
         {stars.map((star) => (
@@ -71,7 +73,7 @@ function SpaceBackground({ variant = "default" }: SpaceBackgroundProps) {
         {comets.map((comet) => (
           <div
             key={comet.id}
-            className="comet"
+            className={`comet comet-${variant}`}
             style={{
               left: `${comet.x}%`,
               animationDelay: `${comet.delay}s`,
@@ -84,8 +86,8 @@ function SpaceBackground({ variant = "default" }: SpaceBackgroundProps) {
         ))}
       </div>
 
-      <div className="planet planet-1" />
-      <div className="planet planet-2" />
+      <div className={`planet planet-1 planet-1-${variant}`} />
+      <div className={`planet planet-2 planet-2-${variant}`} />
     </div>
   );
 }
