@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, Cake, Calendar, LogOut, Sparkles, Users } from "lucide-react";
-import StarField from "@/components/StarField";
-import Planet3D from "@/components/animations/Planet3D";
+import SpaceBackground from "@/components/SpaceBackground";
 import SecretMenu from "@/components/SecretMenu";
 import type { User } from "firebase/auth";
 
@@ -60,38 +59,7 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-      <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/70 via-purple-950/50 to-black">
-        <StarField count={150} />
-      </div>
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.25, 0.2] }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute -top-1/2 -left-1/4 w-[800px] h-[800px] bg-purple-600/20 rounded-full blur-[100px]" 
-        />
-        <motion.div 
-          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.2, 0.15] }}
-          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-          className="absolute -bottom-1/2 -right-1/4 w-[1000px] h-[1000px] bg-pink-600/15 rounded-full blur-[120px]" 
-        />
-        <div className="absolute top-1/3 left-1/2 w-[700px] h-[700px] bg-indigo-600/18 rounded-full blur-[110px]" />
-      </div>
-
-      <Planet3D 
-        size={450} 
-        position={{ x: "8%", y: "30%" }}
-        colors={["#a78bfa", "#8b5cf6", "#6366f1"]}
-        rotationSpeed={100}
-        type="gas"
-      />
-      <Planet3D 
-        size={300} 
-        position={{ x: "92%", y: "75%" }}
-        colors={["#ec4899", "#f472b6", "#fb923c"]}
-        rotationSpeed={120}
-        type="rocky"
-      />
+      <SpaceBackground variant="default" />
 
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">

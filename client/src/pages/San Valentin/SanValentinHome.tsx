@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Heart, Mail, BookOpen, Sparkles, Gamepad2, Grid3X3 } from "lucide-react";
-import FloatingHearts from "@/components/animations/FloatingHearts";
+import SpaceBackground from "@/components/SpaceBackground";
 import YearSelector from "@/components/YearSelector";
 import ValentineGate from "./ValentineGate";
 import { sanValentinData } from "@/data/events";
-import PageTransition from "@/components/animations/PageTransition";
-import Planet3D from "@/components/animations/Planet3D";
 import { useSmartCountdown } from "@/hooks/useSmartCountdown";
 
 interface SanValentinHomeProps {
@@ -30,34 +28,10 @@ export default function SanValentinHome({
   const countdown = useSmartCountdown(2, 14, year);
 
   return (
-    <PageTransition pageKey="sanvalentin-home" variant="scale">
-      <div className="min-h-screen relative overflow-hidden bg-black">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-950/90 via-rose-900/85 to-pink-950/90">
-          <FloatingHearts count={20} />
-        </div>
+    <div className="min-h-screen relative overflow-hidden bg-black">
+      <SpaceBackground variant="valentine" />
 
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div 
-            animate={{ opacity: [0.2, 0.3, 0.2] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="absolute top-20 right-1/4 w-[400px] h-[400px] bg-rose-500/20 rounded-full blur-3xl" 
-          />
-          <motion.div 
-            animate={{ opacity: [0.2, 0.3, 0.2] }}
-            transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-            className="absolute bottom-20 left-1/4 w-[400px] h-[400px] bg-pink-500/20 rounded-full blur-3xl" 
-          />
-        </div>
-
-        <Planet3D 
-          size={350} 
-          position={{ x: "8%", y: "30%" }}
-          colors={["#fda4af", "#fb7185", "#f43f5e"]}
-          rotationSpeed={95}
-          type="rocky"
-        />
-
-        <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-6">
+      <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-6">
           <motion.button
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -225,7 +199,6 @@ export default function SanValentinHome({
             </motion.div>
           </ValentineGate>
         </div>
-      </div>
-    </PageTransition>
+    </div>
   );
 }

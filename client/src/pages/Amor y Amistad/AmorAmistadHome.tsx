@@ -1,8 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Heart, Sparkles, Construction } from "lucide-react";
-import StarField from "@/components/StarField";
-import Planet3D from "@/components/animations/Planet3D";
-import FloatingHearts from "@/components/animations/FloatingHearts";
+import SpaceBackground from "@/components/SpaceBackground";
 
 interface AmorAmistadHomeProps {
   onBack: () => void;
@@ -11,32 +9,7 @@ interface AmorAmistadHomeProps {
 export default function AmorAmistadHome({ onBack }: AmorAmistadHomeProps) {
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-950/90 via-amber-900/85 to-rose-950/90">
-        <StarField count={120} />
-        <FloatingHearts count={25} />
-      </div>
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl" />
-      </div>
-
-      <Planet3D 
-        size={400} 
-        position={{ x: "85%", y: "25%" }}
-        colors={["#fb923c", "#f97316", "#ea580c"]}
-        rotationSpeed={80}
-        type="gas"
-      />
-
-      <Planet3D 
-        size={250} 
-        position={{ x: "10%", y: "75%" }}
-        colors={["#fbbf24", "#f59e0b", "#d97706"]}
-        rotationSpeed={100}
-        type="moon"
-      />
+      <SpaceBackground variant="default" />
 
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-8">
         <motion.button

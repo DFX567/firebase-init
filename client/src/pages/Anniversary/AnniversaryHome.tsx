@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Heart, Mail, Sparkles, Calendar, Gamepad2, Clock, Layers } from "lucide-react";
+import SpaceBackground from "@/components/SpaceBackground";
 import YearSelector from "@/components/YearSelector";
 import AnniversaryGate from "./AnniversaryGate";
 import { anniversaryData } from "@/data/events";
-import StarField from "@/components/StarField";
-import Planet3D from "@/components/animations/Planet3D";
 import { useSmartCountdown } from "@/hooks/useSmartCountdown";
 
 interface AnniversaryHomeProps {
@@ -22,30 +21,7 @@ export default function AnniversaryHome({ onBack, onViewLetter, onViewTimeline, 
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-      <div className="absolute inset-0 bg-gradient-to-br from-rose-950/90 via-pink-950/80 to-purple-950/90">
-        <StarField count={100} />
-      </div>
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ opacity: [0.2, 0.3, 0.2] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-rose-500/20 rounded-full blur-3xl" 
-        />
-        <motion.div 
-          animate={{ opacity: [0.15, 0.25, 0.15] }}
-          transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-          className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-pink-500/15 rounded-full blur-3xl" 
-        />
-      </div>
-
-      <Planet3D 
-        size={400} 
-        position={{ x: "88%", y: "20%" }}
-        colors={["#fecdd3", "#fb7185", "#e11d48"]}
-        rotationSpeed={90}
-        type="moon"
-      />
+      <SpaceBackground variant="anniversary" />
 
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-6">
         <motion.button

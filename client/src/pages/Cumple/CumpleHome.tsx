@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Cake, Mail, Sparkles, PartyPopper, Star, Gift, Gamepad2 } from "lucide-react";
-import ConfettiRain from "@/components/animations/ConfettiRain";
+import SpaceBackground from "@/components/SpaceBackground";
 import YearSelector from "@/components/YearSelector";
 import BirthdayGate from "./BirthdayGate";
 import { cumpleData } from "@/data/events";
-import PageTransition from "@/components/animations/PageTransition";
-import Planet3D from "@/components/animations/Planet3D";
 import { useSmartCountdown } from "@/hooks/useSmartCountdown";
 
 interface CumpleHomeProps {
@@ -22,34 +20,10 @@ export default function CumpleHome({ onBack, onViewLetter, onViewCatcher, onView
   const countdown = useSmartCountdown(12, 19, year);
 
   return (
-    <PageTransition pageKey="cumple-home" variant="slide">
-      <div className="min-h-screen relative overflow-hidden bg-black">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/90 via-purple-900/85 to-violet-950/90">
-          <ConfettiRain count={40} />
-        </div>
+    <div className="min-h-screen relative overflow-hidden bg-black">
+      <SpaceBackground variant="birthday" />
 
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div 
-            animate={{ opacity: [0.25, 0.35, 0.25] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-purple-500/25 rounded-full blur-3xl" 
-          />
-          <motion.div 
-            animate={{ opacity: [0.25, 0.35, 0.25] }}
-            transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-            className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/25 rounded-full blur-3xl" 
-          />
-        </div>
-
-        <Planet3D 
-          size={350} 
-          position={{ x: "90%", y: "25%" }}
-          colors={["#c084fc", "#a78bfa", "#8b5cf6"]}
-          rotationSpeed={85}
-          type="gas"
-        />
-
-        <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-6">
+      <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-6">
           <motion.button
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -202,7 +176,6 @@ export default function CumpleHome({ onBack, onViewLetter, onViewCatcher, onView
             </motion.div>
           </BirthdayGate>
         </div>
-      </div>
-    </PageTransition>
+    </div>
   );
 }

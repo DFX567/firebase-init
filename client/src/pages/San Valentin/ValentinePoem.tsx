@@ -2,8 +2,7 @@ import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { sanValentinContent } from "@/data/events";
 import { ArrowLeft, FastForward, SkipForward, Heart, Sparkles, BookOpen } from "lucide-react";
-import FloatingHearts from "@/components/animations/FloatingHearts";
-import Planet3D from "@/components/animations/Planet3D";
+import SpaceBackground from "@/components/SpaceBackground";
 
 interface ValentinePoemProps {
   year: number;
@@ -16,30 +15,7 @@ export default function ValentinePoem({ year, onBack }: ValentinePoemProps) {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-950/95 via-rose-900/90 to-pink-950/95">
-        <FloatingHearts count={10} />
-      </div>
-
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          className="absolute top-1/4 right-0 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl" 
-        />
-        <motion.div 
-          animate={{ opacity: [0.1, 0.15, 0.1] }}
-          transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-          className="absolute bottom-1/4 left-0 w-80 h-80 bg-rose-500/15 rounded-full blur-3xl" 
-        />
-      </div>
-
-      <Planet3D 
-        size={280} 
-        position={{ x: "10%", y: "80%" }}
-        colors={["#c084fc", "#f472b6", "#fb7185"]}
-        rotationSpeed={120}
-        type="gas"
-      />
+      <SpaceBackground variant="valentine" />
 
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-8">
         <motion.button
