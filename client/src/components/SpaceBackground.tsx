@@ -6,57 +6,75 @@ interface SpaceBackgroundProps {
 }
 
 function SpaceBackground({ variant = "default" }: SpaceBackgroundProps) {
+  const config = useMemo(() => {
+    const configs = {
+      default: {
+        starSeed: 17,
+        cometSeed: 5,
+        starCount: 80,
+        cometCount: 6,
+      },
+      valentine: {
+        starSeed: 31,
+        cometSeed: 12,
+        starCount: 90,
+        cometCount: 8,
+      },
+      birthday: {
+        starSeed: 47,
+        cometSeed: 8,
+        starCount: 100,
+        cometCount: 7,
+      },
+      anniversary: {
+        starSeed: 23,
+        cometSeed: 15,
+        starCount: 70,
+        cometCount: 5,
+      },
+      friendship: {
+        starSeed: 53,
+        cometSeed: 19,
+        starCount: 85,
+        cometCount: 6,
+      },
+    };
+    return configs[variant];
+  }, [variant]);
+
   const stars = useMemo(() => {
-    return Array.from({ length: 80 }, (_, i) => ({
+    return Array.from({ length: config.starCount }, (_, i) => ({
       id: i,
-      x: (i * 17) % 100,
-      y: (i * 23) % 100,
-      size: (i % 3) + 1,
-      opacity: 0.3 + (i % 5) * 0.15,
-      delay: (i % 8) * 0.5,
+      x: (i * config.starSeed + 7) % 100,
+      y: (i * (config.starSeed + 6) + 13) % 100,
+      size: (i % 4) + 1,
+      opacity: 0.25 + (i % 6) * 0.12,
+      delay: (i % 10) * 0.4,
     }));
-  }, []);
+  }, [config]);
 
   const comets = useMemo(() => {
-    return Array.from({ length: 6 }, (_, i) => ({
+    return Array.from({ length: config.cometCount }, (_, i) => ({
       id: i,
-      x: (i * 18 + 5) % 100,
-      delay: i * 3,
-      duration: 4 + (i % 3),
+      x: (i * config.cometSeed + 8) % 85 + 5,
+      delay: i * 2.5 + (config.cometSeed % 3),
+      duration: 3.5 + (i % 4),
     }));
-  }, []);
-
-  const gradientColors = {
-    default: "from-indigo-950/90 via-purple-950/80 to-black",
-    valentine: "from-rose-950/90 via-red-950/80 to-black",
-    birthday: "from-violet-950/90 via-purple-950/80 to-black",
-    anniversary: "from-amber-950/90 via-orange-950/80 to-black",
-    friendship: "from-cyan-950/90 via-teal-950/80 to-black",
-  };
-
-  const glowColors = {
-    default: ["bg-purple-500/20", "bg-indigo-500/15", "bg-violet-500/12"],
-    valentine: ["bg-rose-500/20", "bg-red-500/15", "bg-pink-500/12"],
-    birthday: ["bg-violet-500/20", "bg-purple-500/15", "bg-fuchsia-500/12"],
-    anniversary: ["bg-amber-500/20", "bg-orange-500/15", "bg-yellow-500/12"],
-    friendship: ["bg-cyan-500/20", "bg-teal-500/15", "bg-emerald-500/12"],
-  };
-
-  const colors = glowColors[variant];
+  }, [config]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className={`absolute inset-0 bg-gradient-to-b ${gradientColors[variant]}`} />
+    <div className={`space-bg space-bg-${variant}`}>
+      <div className="space-gradient" />
       
-      <div className={`absolute -top-1/3 -left-1/4 w-[600px] h-[600px] ${colors[0]} rounded-full blur-[100px] space-glow`} />
-      <div className={`absolute -bottom-1/3 -right-1/4 w-[700px] h-[700px] ${colors[1]} rounded-full blur-[120px] space-glow-delay`} />
-      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] ${colors[2]} rounded-full blur-[100px]`} />
+      <div className="space-nebula nebula-1" />
+      <div className="space-nebula nebula-2" />
+      <div className="space-nebula nebula-3" />
 
-      <div className="absolute inset-0">
+      <div className="stars-container">
         {stars.map((star) => (
           <div
             key={star.id}
-            className="absolute rounded-full bg-white star-twinkle"
+            className="star"
             style={{
               width: star.size,
               height: star.size,
@@ -69,11 +87,11 @@ function SpaceBackground({ variant = "default" }: SpaceBackgroundProps) {
         ))}
       </div>
 
-      <div className="absolute inset-0">
+      <div className="comets-container">
         {comets.map((comet) => (
           <div
             key={comet.id}
-            className={`comet comet-${variant}`}
+            className="comet"
             style={{
               left: `${comet.x}%`,
               animationDelay: `${comet.delay}s`,
@@ -86,8 +104,9 @@ function SpaceBackground({ variant = "default" }: SpaceBackgroundProps) {
         ))}
       </div>
 
-      <div className={`planet planet-1 planet-1-${variant}`} />
-      <div className={`planet planet-2 planet-2-${variant}`} />
+      <div className="planet planet-main" />
+      <div className="planet planet-secondary" />
+      <div className="planet planet-small" />
     </div>
   );
 }
