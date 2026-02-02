@@ -1,4 +1,3 @@
-// src/App.tsx
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
 import {
@@ -17,9 +16,6 @@ import CumpleRouter from "@/pages/Cumple/CumpleRouter";
 import SanValentinRouter from "@/pages/San Valentin/SanValentinRouter";
 import AmorAmistadRouter from "@/pages/Amor y Amistad/AmorAmistadRouter";
 
-/* ===============================
-   Correos permitidos
-================================ */
 const ALLOWED_EMAILS = [
   "dfx1mas87@gmail.com",
   "lfbecerraaponte@gmail.com",
@@ -33,9 +29,6 @@ export default function App() {
   const [section, setSection] = useState<Section>("hub");
   const [error, setError] = useState<string | null>(null);
 
-  /* ===============================
-     Auth listener
-  ================================ */
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       if (u && ALLOWED_EMAILS.includes(u.email ?? "")) {
@@ -49,9 +42,6 @@ export default function App() {
     return () => unsub();
   }, []);
 
-  /* ===============================
-     Login
-  ================================ */
   const handleGoogleLogin = async () => {
     try {
       setError(null);
@@ -68,9 +58,6 @@ export default function App() {
     }
   };
 
-  /* ===============================
-     Logout
-  ================================ */
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -81,9 +68,6 @@ export default function App() {
     }
   };
 
-  /* ===============================
-     Loading
-  ================================ */
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-indigo-900 to-black text-white">
@@ -95,16 +79,10 @@ export default function App() {
     );
   }
 
-  /* ===============================
-     LOGIN
-  ================================ */
   if (!user) {
     return <LoginScreen onLogin={handleGoogleLogin} error={error} />;
   }
 
-  /* ===============================
-     SECTIONS
-  ================================ */
   if (section === "anniversary") {
     return <AnniversaryRouter onBack={() => setSection("hub")} />;
   }
@@ -121,8 +99,5 @@ export default function App() {
     return <AmorAmistadRouter onBack={() => setSection("hub")} />;
   }
 
-  /* ===============================
-     HUB
-  ================================ */
   return <Hub onSelect={setSection} onLogout={handleLogout} user={user} />;
 }

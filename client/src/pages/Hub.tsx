@@ -222,7 +222,7 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 1, repeat: Infinity }}
             >
-              💜
+              ❤️
             </motion.span>
             para nosotros
           </p>

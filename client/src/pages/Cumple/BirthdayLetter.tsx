@@ -16,18 +16,15 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-      {/* Fondo festivo */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/90 via-purple-900/85 to-violet-950/90">
         <ConfettiRain count={60} />
       </div>
 
-      {/* Luces festivas */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/25 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/25 rounded-full blur-3xl" />
       </div>
 
-      {/* Planeta festivo */}
       <Planet3D 
         size={380} 
         position={{ x: "10%", y: "25%" }}
@@ -36,7 +33,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
         type="gas"
       />
 
-      {/* Globos flotantes */}
       {[...Array(8)].map((_, i) => (
         <motion.div
           key={i}
@@ -59,7 +55,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
         </motion.div>
       ))}
 
-      {/* Header */}
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-8">
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -75,7 +70,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-10">
-        {/* Título festivo */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -109,7 +103,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
           </div>
         </motion.div>
 
-        {/* Carta festiva */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -119,11 +112,9 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
           <div className="absolute -inset-4 bg-gradient-to-r from-purple-500/20 via-violet-500/20 to-indigo-500/20 rounded-3xl blur-2xl" />
 
           <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-2xl rounded-2xl md:rounded-3xl p-6 md:p-10 border border-purple-300/30 shadow-2xl overflow-hidden">
-            {/* Confeti decorativo */}
             <div className="absolute top-4 right-4 text-4xl md:text-5xl opacity-10">🎊</div>
             <div className="absolute bottom-4 left-4 text-4xl md:text-5xl opacity-10">🎁</div>
 
-            {/* Corona decorativa */}
             <div className="absolute -top-3 -left-3 md:-top-5 md:-left-5 bg-purple-500/80 backdrop-blur-sm rounded-full p-2 md:p-3 border-2 border-purple-300/50 shadow-lg">
               <motion.div
                 animate={{ rotate: [0, -10, 10, 0] }}
@@ -155,7 +146,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
           </div>
         </motion.div>
 
-        {/* Controles */}
         {!done && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

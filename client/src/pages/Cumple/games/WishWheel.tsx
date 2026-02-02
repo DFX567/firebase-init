@@ -1,54 +1,68 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Sparkles, RotateCcw, Star } from "lucide-react";
+import { ArrowLeft, Sparkles, RotateCcw, Gift, Heart, Star, PartyPopper } from "lucide-react";
 
 interface WishWheelProps {
   onBack: () => void;
 }
 
 const wishes = [
-  { text: "Mucho amor", color: "from-pink-500 to-rose-500" },
-  { text: "Salud infinita", color: "from-green-500 to-emerald-500" },
-  { text: "Alegria siempre", color: "from-yellow-500 to-amber-500" },
-  { text: "Exito total", color: "from-blue-500 to-indigo-500" },
-  { text: "Paz interior", color: "from-purple-500 to-violet-500" },
-  { text: "Suerte maxima", color: "from-orange-500 to-red-500" },
-  { text: "Felicidad eterna", color: "from-cyan-500 to-teal-500" },
-  { text: "Abundancia", color: "from-fuchsia-500 to-pink-500" },
+  { text: "Mucho amor", icon: Heart, color: "from-pink-500 to-rose-500" },
+  { text: "Salud infinita", icon: Sparkles, color: "from-green-500 to-emerald-500" },
+  { text: "Alegría siempre", icon: PartyPopper, color: "from-yellow-500 to-amber-500" },
+  { text: "Éxito total", icon: Star, color: "from-blue-500 to-indigo-500" },
+  { text: "Paz interior", icon: Heart, color: "from-purple-500 to-violet-500" },
+  { text: "Suerte máxima", icon: Gift, color: "from-orange-500 to-red-500" },
+  { text: "Felicidad eterna", icon: Sparkles, color: "from-cyan-500 to-teal-500" },
+  { text: "Abundancia", icon: Star, color: "from-fuchsia-500 to-pink-500" },
+  { text: "Amor verdadero", icon: Heart, color: "from-rose-500 to-pink-500" },
+  { text: "Sueños cumplidos", icon: Sparkles, color: "from-indigo-500 to-purple-500" },
+  { text: "Momentos mágicos", icon: PartyPopper, color: "from-amber-500 to-orange-500" },
+  { text: "Risas infinitas", icon: Gift, color: "from-teal-500 to-cyan-500" },
 ];
 
 export default function WishWheel({ onBack }: WishWheelProps) {
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [rotation, setRotation] = useState(0);
-  const [selectedWish, setSelectedWish] = useState<string | null>(null);
-  const [showResult, setShowResult] = useState(false);
+  const [currentWish, setCurrentWish] = useState<number | null>(null);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [revealedWishes, setRevealedWishes] = useState<number[]>([]);
 
-  const spinWheel = () => {
-    if (isSpinning) return;
+  const revealWish = () => {
+    if (isRevealing) return;
     
-    setIsSpinning(true);
-    setShowResult(false);
+    setIsRevealing(true);
+    setCurrentWish(null);
     
-    const spins = 5 + Math.random() * 5;
-    const extraDegrees = Math.random() * 360;
-    const totalRotation = rotation + (spins * 360) + extraDegrees;
+    const availableWishes = wishes
+      .map((_, i) => i)
+      .filter(i => !revealedWishes.includes(i));
     
-    setRotation(totalRotation);
+    if (availableWishes.length === 0) {
+      setRevealedWishes([]);
+      const randomIndex = Math.floor(Math.random() * wishes.length);
+      setTimeout(() => {
+        setCurrentWish(randomIndex);
+        setRevealedWishes([randomIndex]);
+        setIsRevealing(false);
+      }, 1500);
+      return;
+    }
+    
+    const randomIndex = availableWishes[Math.floor(Math.random() * availableWishes.length)];
     
     setTimeout(() => {
-      const normalizedRotation = totalRotation % 360;
-      const segmentAngle = 360 / wishes.length;
-      const index = Math.floor((360 - normalizedRotation + segmentAngle / 2) % 360 / segmentAngle);
-      setSelectedWish(wishes[index].text);
-      setIsSpinning(false);
-      setShowResult(true);
-    }, 5000);
+      setCurrentWish(randomIndex);
+      setRevealedWishes(prev => [...prev, randomIndex]);
+      setIsRevealing(false);
+    }, 1500);
   };
 
   const reset = () => {
-    setShowResult(false);
-    setSelectedWish(null);
+    setCurrentWish(null);
+    setRevealedWishes([]);
   };
+
+  const wish = currentWish !== null ? wishes[currentWish] : null;
+  const Icon = wish?.icon || Sparkles;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-950 via-purple-900 to-indigo-950 p-4 md:p-8">
@@ -67,112 +81,125 @@ export default function WishWheel({ onBack }: WishWheelProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-6"
+          className="text-center mb-8"
         >
           <Sparkles className="w-10 h-10 md:w-12 md:h-12 text-purple-300 mx-auto mb-3" />
-          <h1 className="text-2xl md:text-4xl font-bold text-purple-100 mb-2">Rueda de Deseos</h1>
-          <p className="text-purple-200/70 text-sm">Gira la rueda y descubre tu deseo</p>
+          <h1 className="text-2xl md:text-4xl font-bold text-purple-100 mb-2">Caja de Deseos</h1>
+          <p className="text-purple-200/70 text-sm">Toca la caja mágica para descubrir tu deseo</p>
         </motion.div>
 
-        <div className="relative mb-8">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 z-10">
-            <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[20px] border-l-transparent border-r-transparent border-t-yellow-400 drop-shadow-lg" />
-          </div>
-
-          <motion.div
-            animate={{ rotate: rotation }}
-            transition={{ duration: 5, ease: [0.2, 0.8, 0.2, 1] }}
-            className="relative w-64 h-64 md:w-80 md:h-80 mx-auto rounded-full border-4 border-purple-300/30 shadow-2xl overflow-hidden"
+        <div className="flex justify-center mb-8">
+          <motion.button
+            whileHover={{ scale: isRevealing ? 1 : 1.05 }}
+            whileTap={{ scale: isRevealing ? 1 : 0.95 }}
+            onClick={revealWish}
+            disabled={isRevealing}
+            data-testid="button-reveal-wish"
+            className="relative"
           >
-            {wishes.map((wish, i) => {
-              const angle = (360 / wishes.length) * i;
-              return (
-                <div
-                  key={i}
-                  className={`absolute w-1/2 h-1/2 origin-bottom-right bg-gradient-to-br ${wish.color}`}
-                  style={{
-                    transform: `rotate(${angle}deg) skewY(${90 - 360 / wishes.length}deg)`,
-                    transformOrigin: '0% 100%',
-                    left: '50%',
-                    top: '0%',
-                  }}
-                >
-                  <span
-                    className="absolute text-[8px] md:text-[10px] font-bold text-white whitespace-nowrap"
-                    style={{
-                      transform: `skewY(${-(90 - 360 / wishes.length)}deg) rotate(${360 / wishes.length / 2}deg)`,
-                      transformOrigin: 'left center',
-                      left: '20%',
-                      top: '40%',
-                    }}
-                  >
-                    {wish.text}
-                  </span>
-                </div>
-              );
-            })}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-purple-900 rounded-full border-4 border-purple-300 flex items-center justify-center shadow-xl">
-                <Star className="w-6 h-6 md:w-8 md:h-8 text-yellow-400 fill-yellow-400" />
-              </div>
-            </div>
-          </motion.div>
+            <motion.div
+              animate={isRevealing ? { 
+                rotateY: [0, 360, 720],
+                scale: [1, 1.1, 1]
+              } : {}}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="w-40 h-40 md:w-52 md:h-52 rounded-3xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-2xl border-4 border-purple-300/30 cursor-pointer"
+            >
+              <Gift className="w-20 h-20 md:w-28 md:h-28 text-white" />
+            </motion.div>
+            
+            {!isRevealing && currentWish === null && (
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 rounded-full p-2"
+              >
+                <Sparkles className="w-5 h-5" />
+              </motion.div>
+            )}
+          </motion.button>
         </div>
 
         <AnimatePresence mode="wait">
-          {showResult ? (
+          {wish && !isRevealing && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -30 }}
               className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-purple-300/20 text-center"
             >
               <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 0.5, repeat: 3 }}
-                className="text-5xl mb-4"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 0.5 }}
+                className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${wish.color} mb-4`}
               >
-                🎉
+                <Icon className="w-10 h-10 text-white" />
               </motion.div>
-              <h2 className="text-xl md:text-2xl font-bold text-purple-100 mb-2">Tu deseo es:</h2>
-              <p className="text-2xl md:text-3xl font-black text-yellow-400 mb-6">{selectedWish}</p>
-              <div className="flex gap-4 justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={reset}
-                  data-testid="button-spin-again"
-                  className="flex items-center gap-2 px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-xl text-white font-semibold"
-                >
-                  <RotateCcw className="w-5 h-5" />
-                  Girar de nuevo
-                </motion.button>
-              </div>
+              
+              <motion.div
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 0.5, repeat: 2 }}
+              >
+                <h2 className="text-xl md:text-2xl font-bold text-purple-100 mb-2">Tu deseo es:</h2>
+                <p className="text-2xl md:text-3xl font-black text-yellow-400">{wish.text}</p>
+              </motion.div>
+              
+              <p className="text-purple-200/60 text-sm mt-4">
+                Deseos revelados: {revealedWishes.length} de {wishes.length}
+              </p>
             </motion.div>
-          ) : (
+          )}
+          
+          {isRevealing && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center"
+              className="text-center py-8"
             >
-              <motion.button
-                whileHover={{ scale: isSpinning ? 1 : 1.05 }}
-                whileTap={{ scale: isSpinning ? 1 : 0.95 }}
-                onClick={spinWheel}
-                disabled={isSpinning}
-                data-testid="button-spin-wheel"
-                className={`px-8 py-4 rounded-2xl font-bold text-lg transition-all ${
-                  isSpinning
-                    ? "bg-purple-500/50 text-purple-200 cursor-not-allowed"
-                    : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-xl"
-                }`}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               >
-                {isSpinning ? "Girando..." : "Girar Rueda"}
-              </motion.button>
+                <Sparkles className="w-12 h-12 text-yellow-400 mx-auto" />
+              </motion.div>
+              <p className="text-purple-200 mt-4">Descubriendo tu deseo...</p>
             </motion.div>
           )}
         </AnimatePresence>
+
+        <div className="mt-8 flex justify-center gap-4">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={revealWish}
+            disabled={isRevealing}
+            data-testid="button-another-wish"
+            className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+              isRevealing
+                ? "bg-purple-500/30 text-purple-300 cursor-not-allowed"
+                : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+            }`}
+          >
+            {currentWish === null ? "Revelar Deseo" : "Otro Deseo"}
+          </motion.button>
+          
+          {revealedWishes.length > 0 && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={reset}
+              data-testid="button-reset-wishes"
+              className="flex items-center gap-2 px-6 py-3 bg-purple-500/20 hover:bg-purple-500/30 rounded-xl border border-purple-300/30 text-purple-100 font-semibold"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Reiniciar
+            </motion.button>
+          )}
+        </div>
       </div>
     </div>
   );

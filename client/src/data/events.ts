@@ -1,8 +1,3 @@
-// src/data/events.ts
-
-/* ===============================
-   DATOS DE CUMPLEAÑOS (19 de diciembre)
-================================ */
 export const cumpleData: Record<
   number,
   {
@@ -48,9 +43,6 @@ export const cumpleData: Record<
   },
 };
 
-/* ===============================
-   DATOS DE SAN VALENTIN (14 de febrero)
-================================ */
 export const sanValentinData: Record<
   number,
   {
@@ -91,9 +83,6 @@ export const sanValentinData: Record<
   },
 };
 
-/* ===============================
-   DATOS DE ANIVERSARIO (02 de noviembre 2024)
-================================ */
 export const anniversaryData: Record<
   number,
   {
@@ -139,9 +128,6 @@ export const anniversaryData: Record<
   },
 };
 
-/* ===============================
-   DATOS DE AMOR Y AMISTAD (septiembre)
-================================ */
 export const amorAmistadData: Record<
   number,
   {
@@ -162,9 +148,6 @@ export const amorAmistadData: Record<
   },
 };
 
-/* ===============================
-   CONTENIDO DE SAN VALENTIN
-================================ */
 export const sanValentinContent = {
   poem: {
     title: "Para ti, mi amor",
@@ -215,9 +198,6 @@ Siempre tuyo/a
   },
 };
 
-/* ===============================
-   CONTENIDO DE ANIVERSARIO
-================================ */
 export const anniversaryContent = {
   poem: {
     title: "Nuestro tiempo juntos",
@@ -293,9 +273,6 @@ P.D. Gracias por existir y por elegirme cada día.
   },
 };
 
-/* ===============================
-   CONTENIDO DE CUMPLEAÑOS
-================================ */
 export const cumpleContent = {
   letter: {
     title: "Feliz cumple",

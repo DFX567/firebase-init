@@ -16,12 +16,10 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-      {/* Fondo romántico */}
       <div className="absolute inset-0 bg-gradient-to-br from-rose-950/90 via-pink-900/85 to-purple-950/90">
         <StarField count={80} />
       </div>
 
-      {/* Planeta decorativo */}
       <Planet3D 
         size={350} 
         position={{ x: "90%", y: "20%" }}
@@ -30,7 +28,6 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
         type="moon"
       />
 
-      {/* Corazones flotantes sutiles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(15)].map((_, i) => (
           <motion.div
@@ -55,7 +52,6 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
         ))}
       </div>
 
-      {/* Header */}
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-8">
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -71,7 +67,6 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-8 py-6 md:py-10">
-        {/* Título con efecto */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -97,24 +92,19 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
           </div>
         </motion.div>
 
-        {/* Carta con efecto papel */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
           className="relative mb-8"
         >
-          {/* Glow exterior */}
           <div className="absolute -inset-4 bg-gradient-to-r from-rose-500/20 via-pink-500/20 to-rose-500/20 rounded-3xl blur-2xl" />
           
-          {/* Papel de carta */}
           <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-2xl rounded-2xl md:rounded-3xl p-6 md:p-10 border border-rose-300/30 shadow-2xl">
-            {/* Textura de papel */}
             <div className="absolute inset-0 opacity-5 rounded-2xl md:rounded-3xl" style={{
               backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)'
             }} />
 
-            {/* Sello de amor */}
             <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-rose-500/80 backdrop-blur-sm rounded-full p-3 md:p-4 border-2 border-rose-300/50 shadow-lg">
               <motion.div
                 animate={{ rotate: [0, -10, 10, 0] }}
@@ -124,7 +114,6 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
               </motion.div>
             </div>
 
-            {/* Contenido de la carta */}
             <div className="relative">
               <pre className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans text-rose-50/95">
                 {display}
@@ -138,7 +127,6 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
               </pre>
             </div>
 
-            {/* Decoración inferior */}
             <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-rose-300/20">
               <Heart className="w-3 h-3 text-rose-300/50 fill-rose-300/50" />
               <span className="text-xs text-rose-200/50 uppercase tracking-widest">Con todo mi amor</span>
@@ -147,7 +135,6 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
           </div>
         </motion.div>
 
-        {/* Controles */}
         {!done && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

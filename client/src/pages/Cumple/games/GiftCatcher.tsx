@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Gift, Trophy, RotateCcw, Timer, Star } from "lucide-react";
 
@@ -11,19 +11,25 @@ interface FallingGift {
   x: number;
   type: 'gift' | 'star' | 'cake';
   points: number;
+  startTime: number;
 }
+
+const GAME_DURATION = 30;
+const FALL_DURATION = 4000;
+const CATCHER_WIDTH = 15;
 
 export default function GiftCatcher({ onBack }: GiftCatcherProps) {
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [gifts, setGifts] = useState<FallingGift[]>([]);
   const [catcherX, setCatcherX] = useState(50);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const startGame = () => {
     setScore(0);
-    setTimeLeft(30);
+    setTimeLeft(GAME_DURATION);
     setIsPlaying(true);
     setGameOver(false);
     setGifts([]);
@@ -56,12 +62,13 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
       const points = type === 'cake' ? 30 : type === 'star' ? 20 : 10;
       
       setGifts(prev => [...prev, {
-        id: Date.now(),
-        x: Math.random() * 80 + 10,
+        id: Date.now() + Math.random(),
+        x: Math.random() * 70 + 15,
         type,
-        points
+        points,
+        startTime: Date.now()
       }]);
-    }, 800);
+    }, 1000);
 
     return () => clearInterval(spawnInterval);
   }, [isPlaying]);
@@ -69,48 +76,41 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
   useEffect(() => {
     if (!isPlaying) return;
 
-    const moveInterval = setInterval(() => {
-      setGifts(prev => prev.filter(gift => {
-        const giftElement = document.getElementById(`gift-${gift.id}`);
-        if (!giftElement) return true;
+    const checkInterval = setInterval(() => {
+      const now = Date.now();
+      
+      setGifts(prev => {
+        const remaining: FallingGift[] = [];
         
-        const rect = giftElement.getBoundingClientRect();
-        const container = document.getElementById('game-container');
-        if (!container) return true;
-        
-        const containerRect = container.getBoundingClientRect();
-        const relativeBottom = rect.bottom - containerRect.top;
-        
-        if (relativeBottom > containerRect.height - 60) {
-          const giftCenter = gift.x;
-          if (Math.abs(giftCenter - catcherX) < 15) {
-            setScore(s => s + gift.points);
-            return false;
+        for (const gift of prev) {
+          const elapsed = now - gift.startTime;
+          const progress = elapsed / FALL_DURATION;
+          
+          if (progress >= 0.85 && progress <= 1.0) {
+            if (Math.abs(gift.x - catcherX) < CATCHER_WIDTH) {
+              setScore(s => s + gift.points);
+              continue;
+            }
+          }
+          
+          if (progress < 1.0) {
+            remaining.push(gift);
           }
         }
         
-        if (relativeBottom > containerRect.height) {
-          return false;
-        }
-        
-        return true;
-      }));
-    }, 50);
+        return remaining;
+      });
+    }, 100);
 
-    return () => clearInterval(moveInterval);
+    return () => clearInterval(checkInterval);
   }, [isPlaying, catcherX]);
 
-  const handleMove = useCallback((clientX: number) => {
-    const container = document.getElementById('game-container');
-    if (!container) return;
-    
-    const rect = container.getBoundingClientRect();
+  const handleMove = (clientX: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
     const x = ((clientX - rect.left) / rect.width) * 100;
     setCatcherX(Math.max(10, Math.min(90, x)));
-  }, []);
-
-  const handleMouseMove = (e: React.MouseEvent) => handleMove(e.clientX);
-  const handleTouchMove = (e: React.TouchEvent) => handleMove(e.touches[0].clientX);
+  };
 
   const getEmoji = (type: string) => {
     switch (type) {
@@ -153,7 +153,7 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
               className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-purple-300/20 text-center"
             >
               <div className="text-6xl mb-6">🎁</div>
-              <h2 className="text-xl font-bold text-purple-100 mb-4">Como jugar</h2>
+              <h2 className="text-xl font-bold text-purple-100 mb-4">Cómo jugar</h2>
               <p className="text-purple-200/80 mb-6 text-sm">
                 Mueve la canasta con el mouse o dedo para atrapar los regalos que caen. 
                 Cada regalo vale puntos diferentes!
@@ -211,38 +211,43 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
               </div>
 
               <div 
-                id="game-container"
-                className="relative h-[400px] md:h-[500px] bg-purple-900/30 rounded-3xl border border-purple-300/20 overflow-hidden touch-none"
-                onMouseMove={handleMouseMove}
-                onTouchMove={handleTouchMove}
+                ref={containerRef}
+                className="relative h-[400px] md:h-[500px] bg-purple-900/30 rounded-3xl border border-purple-300/20 overflow-hidden touch-none select-none"
+                onMouseMove={(e) => handleMove(e.clientX)}
+                onTouchMove={(e) => handleMove(e.touches[0].clientX)}
               >
                 {gifts.map(gift => (
-                  <motion.div
+                  <div
                     key={gift.id}
-                    id={`gift-${gift.id}`}
-                    initial={{ y: -50 }}
-                    animate={{ y: '100%' }}
-                    transition={{ duration: 3, ease: 'linear' }}
-                    className="absolute text-3xl md:text-4xl"
-                    style={{ left: `${gift.x}%`, transform: 'translateX(-50%)' }}
+                    className="absolute text-3xl md:text-4xl animate-fall"
+                    style={{ 
+                      left: `${gift.x}%`, 
+                      transform: 'translateX(-50%)',
+                      animation: `fall ${FALL_DURATION}ms linear forwards`
+                    }}
                   >
                     {getEmoji(gift.type)}
-                  </motion.div>
+                  </div>
                 ))}
 
-                <motion.div
-                  className="absolute bottom-4 text-4xl md:text-5xl"
-                  animate={{ left: `${catcherX}%` }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  style={{ transform: 'translateX(-50%)' }}
+                <div
+                  className="absolute bottom-4 text-4xl md:text-5xl transition-all duration-75"
+                  style={{ left: `${catcherX}%`, transform: 'translateX(-50%)' }}
                 >
                   🧺
-                </motion.div>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      <style>{`
+        @keyframes fall {
+          from { top: -50px; }
+          to { top: 100%; }
+        }
+      `}</style>
     </div>
   );
 }

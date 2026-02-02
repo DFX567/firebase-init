@@ -7,12 +7,22 @@ interface LoveCardsProps {
 }
 
 const loveMessages = [
-  { front: "Te amo porque...", back: "Cada dia eliges quedarte a mi lado" },
-  { front: "Mi momento favorito...", back: "Es cuando nos reimos juntos" },
-  { front: "Contigo aprendi...", back: "Que el amor verdadero existe" },
-  { front: "Lo que mas admiro de ti...", back: "Tu corazon bondadoso" },
-  { front: "Nuestro futuro...", back: "Esta lleno de aventuras juntos" },
+  { front: "Te amo porque...", back: "Cada día eliges quedarte a mi lado" },
+  { front: "Mi momento favorito...", back: "Es cuando nos reímos juntos" },
+  { front: "Contigo aprendí...", back: "Que el amor verdadero existe" },
+  { front: "Lo que más admiro de ti...", back: "Tu corazón bondadoso" },
+  { front: "Nuestro futuro...", back: "Está lleno de aventuras juntos" },
   { front: "Gracias por...", back: "Ser mi mejor amigo/a y amor" },
+  { front: "Eres mi persona favorita porque...", back: "Me haces ser mejor cada día" },
+  { front: "Mi lugar favorito...", back: "Es cualquier lugar contigo" },
+  { front: "Lo que más amo de nosotros...", back: "Es que nos elegimos siempre" },
+  { front: "Mi sueño contigo...", back: "Es envejecer a tu lado" },
+  { front: "Cuando te veo...", back: "Mi corazón late más fuerte" },
+  { front: "Nunca olvidaré...", back: "El día que nos conocimos" },
+  { front: "Eres especial porque...", back: "Me amas como soy" },
+  { front: "Lo mejor de amarte...", back: "Es que tú me amas también" },
+  { front: "Mi deseo para nosotros...", back: "Es que el amor nunca termine" },
+  { front: "Contigo he descubierto...", back: "Lo que es la felicidad" },
 ];
 
 export default function LoveCards({ onBack }: LoveCardsProps) {
