@@ -11,12 +11,10 @@ interface FallingGift {
   x: number;
   type: 'gift' | 'star' | 'cake';
   points: number;
-  startTime: number;
+  caught: boolean;
 }
 
 const GAME_DURATION = 30;
-const FALL_DURATION = 4000;
-const CATCHER_WIDTH = 15;
 
 export default function GiftCatcher({ onBack }: GiftCatcherProps) {
   const [score, setScore] = useState(0);
@@ -26,6 +24,7 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
   const [gifts, setGifts] = useState<FallingGift[]>([]);
   const [catcherX, setCatcherX] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
+  const catcherRef = useRef(50);
 
   const startGame = () => {
     setScore(0);
@@ -34,6 +33,7 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
     setGameOver(false);
     setGifts([]);
     setCatcherX(50);
+    catcherRef.current = 50;
   };
 
   useEffect(() => {
@@ -61,55 +61,46 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
       const type = types[Math.floor(Math.random() * types.length)];
       const points = type === 'cake' ? 30 : type === 'star' ? 20 : 10;
       
-      setGifts(prev => [...prev, {
+      const newGift: FallingGift = {
         id: Date.now() + Math.random(),
         x: Math.random() * 70 + 15,
         type,
         points,
-        startTime: Date.now()
-      }]);
-    }, 1000);
+        caught: false
+      };
+
+      setGifts(prev => [...prev, newGift]);
+
+      setTimeout(() => {
+        setGifts(prev => {
+          const gift = prev.find(g => g.id === newGift.id);
+          if (gift && !gift.caught) {
+            const catcherPos = catcherRef.current;
+            if (Math.abs(gift.x - catcherPos) < 18) {
+              setScore(s => s + gift.points);
+              return prev.map(g => g.id === newGift.id ? { ...g, caught: true } : g);
+            }
+          }
+          return prev;
+        });
+      }, 3500);
+
+      setTimeout(() => {
+        setGifts(prev => prev.filter(g => g.id !== newGift.id));
+      }, 4000);
+
+    }, 1200);
 
     return () => clearInterval(spawnInterval);
   }, [isPlaying]);
-
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    const checkInterval = setInterval(() => {
-      const now = Date.now();
-      
-      setGifts(prev => {
-        const remaining: FallingGift[] = [];
-        
-        for (const gift of prev) {
-          const elapsed = now - gift.startTime;
-          const progress = elapsed / FALL_DURATION;
-          
-          if (progress >= 0.85 && progress <= 1.0) {
-            if (Math.abs(gift.x - catcherX) < CATCHER_WIDTH) {
-              setScore(s => s + gift.points);
-              continue;
-            }
-          }
-          
-          if (progress < 1.0) {
-            remaining.push(gift);
-          }
-        }
-        
-        return remaining;
-      });
-    }, 100);
-
-    return () => clearInterval(checkInterval);
-  }, [isPlaying, catcherX]);
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = ((clientX - rect.left) / rect.width) * 100;
-    setCatcherX(Math.max(10, Math.min(90, x)));
+    const newX = Math.max(10, Math.min(90, x));
+    setCatcherX(newX);
+    catcherRef.current = newX;
   };
 
   const getEmoji = (type: string) => {
@@ -212,18 +203,22 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
 
               <div 
                 ref={containerRef}
-                className="relative h-[400px] md:h-[500px] bg-purple-900/30 rounded-3xl border border-purple-300/20 overflow-hidden touch-none select-none"
+                className="relative h-[400px] md:h-[500px] bg-purple-900/30 rounded-3xl border border-purple-300/20 overflow-hidden select-none"
                 onMouseMove={(e) => handleMove(e.clientX)}
-                onTouchMove={(e) => handleMove(e.touches[0].clientX)}
+                onTouchMove={(e) => {
+                  e.preventDefault();
+                  handleMove(e.touches[0].clientX);
+                }}
+                style={{ touchAction: 'none' }}
               >
-                {gifts.map(gift => (
+                {gifts.map(gift => !gift.caught && (
                   <div
                     key={gift.id}
-                    className="absolute text-3xl md:text-4xl animate-fall"
+                    className="absolute text-3xl md:text-4xl pointer-events-none"
                     style={{ 
                       left: `${gift.x}%`, 
                       transform: 'translateX(-50%)',
-                      animation: `fall ${FALL_DURATION}ms linear forwards`
+                      animation: 'giftFall 4s linear forwards'
                     }}
                   >
                     {getEmoji(gift.type)}
@@ -231,7 +226,7 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
                 ))}
 
                 <div
-                  className="absolute bottom-4 text-4xl md:text-5xl transition-all duration-75"
+                  className="absolute bottom-4 text-4xl md:text-5xl pointer-events-none"
                   style={{ left: `${catcherX}%`, transform: 'translateX(-50%)' }}
                 >
                   🧺
@@ -243,9 +238,10 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
       </div>
 
       <style>{`
-        @keyframes fall {
-          from { top: -50px; }
-          to { top: 100%; }
+        @keyframes giftFall {
+          0% { top: -50px; opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: calc(100% - 60px); opacity: 0; }
         }
       `}</style>
     </div>

@@ -2,13 +2,13 @@ import { useState } from "react";
 import CumpleHome from "./CumpleHome";
 import BirthdayLetter from "./BirthdayLetter";
 import GiftCatcher from "./games/GiftCatcher";
-import WishWheel from "./games/WishWheel";
+import TimeCapsule from "./games/TimeCapsule";
 
 interface CumpleRouterProps {
   onBack: () => void;
 }
 
-type View = 'home' | 'letter' | 'catcher' | 'wheel';
+type View = 'home' | 'letter' | 'catcher' | 'capsule';
 
 export default function CumpleRouter({ onBack }: CumpleRouterProps) {
   const [view, setView] = useState<View>('home');
@@ -22,8 +22,8 @@ export default function CumpleRouter({ onBack }: CumpleRouterProps) {
     return <GiftCatcher onBack={() => setView('home')} />;
   }
 
-  if (view === 'wheel') {
-    return <WishWheel onBack={() => setView('home')} />;
+  if (view === 'capsule') {
+    return <TimeCapsule onBack={() => setView('home')} />;
   }
 
   return (
@@ -31,7 +31,7 @@ export default function CumpleRouter({ onBack }: CumpleRouterProps) {
       onBack={onBack} 
       onViewLetter={(y) => { setYear(y); setView('letter'); }}
       onViewCatcher={() => setView('catcher')}
-      onViewWheel={() => setView('wheel')}
+      onViewCapsule={() => setView('capsule')}
     />
   );
 }
