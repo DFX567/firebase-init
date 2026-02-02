@@ -62,7 +62,7 @@ function calculateCountdown(month: number, day: number, targetYear?: number): Co
     } else {
       const years = Math.floor(daysPassed / 365);
       const remainingDays = daysPassed % 365;
-      message = `Ya ${years === 1 ? 'paso un anio' : `pasaron ${years} anios`}${remainingDays > 0 ? ` y ${remainingDays} dias` : ''} desde que comenzo nuestra historia`;
+      message = `Ya ${years === 1 ? 'pasó un año' : `pasaron ${years} años`}${remainingDays > 0 ? ` y ${remainingDays} días` : ''} desde que comenzó nuestra historia`;
     }
 
     return {

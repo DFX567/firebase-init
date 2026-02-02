@@ -13,23 +13,23 @@ export const cumpleData: Record<
 > = {
   2024: {
     unlockDate: "2024-12-19",
-    title: "Tu dia especial 2024",
+    title: "Tu día especial 2024",
     message: "El primer cumple que celebramos juntos. Un momento magico.",
   },
   2025: {
     unlockDate: "2025-12-19",
-    title: "Tu dia especial",
+    title: "Tu día especial",
     message: "Hoy celebramos tu existencia. Gracias por iluminar mi vida.",
   },
   2026: {
     unlockDate: "2026-12-19",
-    title: "Otro anio mas",
-    message: "Cada anio contigo es un regalo que agradezco todos los dias.",
+    title: "Otro año más",
+    message: "Cada año contigo es un regalo que agradezco todos los días.",
   },
   2027: {
     unlockDate: "2027-12-19",
     title: "Celebrando juntos",
-    message: "Un anio mas de amor, risas y momentos inolvidables.",
+    message: "Un año más de amor, risas y momentos inolvidables.",
   },
   2028: {
     unlockDate: "2028-12-19",
@@ -44,7 +44,7 @@ export const cumpleData: Record<
   2030: {
     unlockDate: "2030-12-19",
     title: "Un futuro brillante",
-    message: "Juntos, cada anio es mejor que el anterior.",
+    message: "Juntos, cada año es mejor que el anterior.",
   },
 };
 
@@ -67,12 +67,12 @@ export const sanValentinData: Record<
   2026: {
     unlockDate: "2026-02-14",
     title: "Seguimos eligiendonos",
-    message: "Un anio mas, y sigo enamorado/a como el primer dia.",
+    message: "Un año más, y sigo enamorado/a como el primer día.",
   },
   2027: {
     unlockDate: "2027-02-14",
     title: "Amor eterno",
-    message: "Cada dia te amo mas. Gracias por ser mi compania de vida.",
+    message: "Cada día te amo más. Gracias por ser mi compañía de vida.",
   },
   2028: {
     unlockDate: "2028-02-14",
@@ -87,7 +87,7 @@ export const sanValentinData: Record<
   2030: {
     unlockDate: "2030-02-14",
     title: "Juntos por siempre",
-    message: "Seis anios de San Valentin juntos, y apenas comenzamos.",
+    message: "Seis años de San Valentín juntos, y apenas comenzamos.",
   },
 };
 
@@ -105,36 +105,36 @@ export const anniversaryData: Record<
   2024: {
     unlockDate: "2024-11-02",
     title: "Nuestro comienzo",
-    text: "Aqui empezo todo... El dia que cambiaste mi vida para siempre.",
+    text: "Aquí empezó todo... El día que cambiaste mi vida para siempre.",
   },
   2025: {
     unlockDate: "2025-11-02",
-    title: "Un anio juntos",
-    text: "365 dias de amor, risas y momentos inolvidables. Gracias por elegirme.",
+    title: "Un año juntos",
+    text: "365 días de amor, risas y momentos inolvidables. Gracias por elegirme.",
   },
   2026: {
     unlockDate: "2026-11-02",
-    title: "Dos anios de amor",
+    title: "Dos años de amor",
     text: "Nuestro amor se fortalece con cada momento compartido.",
   },
   2027: {
     unlockDate: "2027-11-02",
-    title: "Tres anios inolvidables",
+    title: "Tres años inolvidables",
     text: "Cada aniversario es un recordatorio de nuestro amor infinito.",
   },
   2028: {
     unlockDate: "2028-11-02",
-    title: "Cuatro anios de felicidad",
+    title: "Cuatro años de felicidad",
     text: "Gracias por hacer de mi vida una aventura hermosa.",
   },
   2029: {
     unlockDate: "2029-11-02",
-    title: "Cinco anios de amor",
-    text: "Media decada juntos, y cada dia te amo mas.",
+    title: "Cinco años de amor",
+    text: "Media década juntos, y cada día te amo más.",
   },
   2030: {
     unlockDate: "2030-11-02",
-    title: "Seis anios perfectos",
+    title: "Seis años perfectos",
     text: "Nuestro amor es eterno, como las estrellas del universo.",
   },
 };
@@ -172,10 +172,10 @@ export const sanValentinContent = {
 En este ${year}, como siempre,
 mi corazon te elige una vez mas.
 
-Cada dia contigo es un verso,
+Cada día contigo es un verso,
 cada momento, un poema sin fin.
 
-Eres la musica de mis dias,
+Eres la música de mis días,
 la luz en mis noches,
 mi refugio y mi hogar.
 
@@ -193,7 +193,7 @@ Mi amor,
 En este San Valentin de ${year}, quiero que sepas
 que amarte es lo mas facil y natural del mundo.
 
-Gracias por cada sonrisa que ilumina mis dias,
+Gracias por cada sonrisa que ilumina mis días,
 por cada abrazo que me hace sentir en casa,
 por cada momento compartido que atesoro en mi corazon.
 
@@ -204,7 +204,7 @@ mi mayor bendicion.
 No hay palabras suficientes para expresar
 lo mucho que significas para mi.
 
-Pero hoy, en este dia especial,
+Pero hoy, en este día especial,
 quiero recordarte que eres
 y seras siempre
 el amor de mi vida.
@@ -224,12 +224,12 @@ export const anniversaryContent = {
     text: (year: number) => {
       const startYear = 2024;
       const yearsCount = year - startYear;
-      const yearsText = yearsCount === 0 ? 'Meses' : yearsCount === 1 ? '1 anio' : `${yearsCount} anios`;
+      const yearsText = yearsCount === 0 ? 'Meses' : yearsCount === 1 ? '1 año' : `${yearsCount} años`;
       return `
 ${yearsText} contigo,
 y siento que apenas comienza nuestra historia.
 
-Cada dia a tu lado es un regalo,
+Cada día a tu lado es un regalo,
 cada recuerdo, un tesoro que guardo
 en lo mas profundo de mi corazon.
 
@@ -239,14 +239,14 @@ gracias por ser tu.
 
 Contigo he aprendido que el amor verdadero
 no es solo sentir mariposas,
-es elegirse cada dia,
+es elegirse cada día,
 es crecer juntos,
 es construir un hogar en el corazon del otro.
 
 Te amo mas que ayer,
-menos que maniana.
+menos que mañana.
 
-Aqui esta a muchos anios mas,
+Aquí está a muchos años más,
 a muchas mas aventuras,
 a un amor eterno.
       `.trim();
@@ -257,7 +257,7 @@ a un amor eterno.
     text: (year: number) => {
       const startYear = 2024;
       const yearsCount = year - startYear;
-      const yearsText = yearsCount === 0 ? 'nuestros primeros meses' : yearsCount === 1 ? '1 anio' : `${yearsCount} anios`;
+      const yearsText = yearsCount === 0 ? 'nuestros primeros meses' : yearsCount === 1 ? '1 año' : `${yearsCount} años`;
       return `
 Mi amor,
 
@@ -268,18 +268,18 @@ Recuerdo el 2 de noviembre de 2024,
 cuando nuestras vidas se unieron
 y supe que habia encontrado algo especial.
 
-Desde entonces, cada dia ha sido una aventura.
+Desde entonces, cada día ha sido una aventura.
 Hemos reido hasta llorar,
 hemos superado desafios juntos,
 hemos creado recuerdos que duraran para siempre.
 
-Gracias por ser mi compania en este viaje,
+Gracias por ser mi compañía en este viaje,
 por amarme en mis mejores y peores momentos,
 por creer en nosotros incluso cuando las cosas se ponen dificiles.
 
 Eres mi hogar, mi paz, mi alegria.
 Contigo, he encontrado un amor
-que nunca supe que podia existir.
+que nunca supe que podía existir.
 
 Aqui esta a nuestro proximo aniversario,
 y a todos los que vendran despues.
@@ -287,14 +287,14 @@ y a todos los que vendran despues.
 Te amo infinitamente,
 Siempre tuyo/a
 
-P.D. Gracias por existir y por elegirme cada dia.
+P.D. Gracias por existir y por elegirme cada día.
       `.trim();
     },
   },
 };
 
 /* ===============================
-   CONTENIDO DE CUMPLEANIOS
+   CONTENIDO DE CUMPLEAÑOS
 ================================ */
 export const cumpleContent = {
   letter: {
@@ -302,8 +302,8 @@ export const cumpleContent = {
     text: (year: number) => `
 Feliz cumple ${year}!
 
-Hoy es tu dia,
-un dia para celebrar
+Hoy es tu día,
+un día para celebrar
 la maravillosa persona que eres.
 
 Gracias por existir,
@@ -315,7 +315,7 @@ tus suenios,
 todo lo que eres
 y todo lo que seras.
 
-Que este nuevo anio de vida
+Que este nuevo año de vida
 este lleno de amor,
 risas,
 y momentos inolvidables.
