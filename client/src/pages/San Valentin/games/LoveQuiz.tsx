@@ -8,29 +8,54 @@ interface LoveQuizProps {
 
 const questions = [
   {
-    question: "Cual es nuestra cancion especial?",
-    options: ["La que suena en nuestro primer baile", "La que cantamos juntos", "La primera que escuchamos juntos", "Todas son especiales"],
-    correct: 3
+    question: "¿En qué mes aproximadamente nos conocimos en WhatsApp?",
+    options: ["Abril-Mayo 2023", "Junio-Julio 2023", "Agosto-Septiembre 2023", "Octubre 2023"],
+    correct: [1]
   },
   {
-    question: "Que es lo mas importante en una relacion?",
-    options: ["Confianza", "Comunicacion", "Amor", "Todo lo anterior"],
-    correct: 3
+    question: "¿Cuándo oficialmente nos hicimos novios?",
+    options: ["2 de octubre 2024", "2 de noviembre 2024", "20 de noviembre 2024", "Noviembre 2024 (sin día específico)"],
+    correct: [1]
   },
   {
-    question: "Cual es el mejor regalo?",
-    options: ["Tiempo juntos", "Flores", "Chocolates", "Sorpresas"],
-    correct: 0
+    question: "¿Cuánto tiempo llevamos juntos aproximadamente?",
+    options: ["10 meses", "1 año", "1 año y 3 meses", "1 año y medio"],
+    correct: [2]
   },
   {
-    question: "Que hace especial nuestra relacion?",
-    options: ["Las risas", "El apoyo mutuo", "Los momentos juntos", "Todo"],
-    correct: 3
+    question: "¿Qué es lo primero que extrañamos al estar a distancia?",
+    options: ["Los abrazos que nunca nos hemos dado", "Salir a pasear juntos", "Ver películas acurrucados", "Dormir juntos"],
+    correct: [0]
   },
   {
-    question: "Cual es la clave del amor duradero?",
-    options: ["Paciencia", "Respeto", "Comprension", "Las tres"],
-    correct: 3
+    question: "Lo que hace especial nuestra relación es:",
+    options: ["Que nos reímos de todo", "La confianza ciega que tenemos", "Nuestras largas conversaciones", "Los videojuegos juntos"],
+    correct: [1]
+  },
+  {
+    question: "¿Cuál es el mayor reto de nuestra relación?",
+    options: ["La diferencia horaria", "No tener fecha cercana para vernos", "Mantener la chispa a distancia", "Los días malos separados"],
+    correct: [1, 3]
+  },
+  {
+    question: "¿Qué preferimos hacer juntos virtualmente?",
+    options: ["Videollamadas largas hablando de todo", "Jugar videojuegos en equipo", "Ver series/películas juntos", "Enviarnos memes todo el día"],
+    correct: [1]
+  },
+  {
+    question: "Lo que más nos emociona de finalmente conocernos en persona es:",
+    options: ["El primer abrazo", "Ver cómo es todo en la realidad", "Hacer todo lo que planeamos", "Confirmar que somos perfectos juntos"],
+    correct: [0, 3]
+  },
+  {
+    question: "¿Qué demuestra que nuestro amor es verdadero?",
+    options: ["Que esperamos sin fecha definida", "La paciencia mutua", "Que seguimos fuertes a pesar de todo", "Nuestros planes de futuro"],
+    correct: [1, 2]
+  },
+  {
+    question: "Este San Valentín representa para nosotros:",
+    options: ["Nuestro primer San Valentín oficial como pareja", "Una celebración del amor a distancia", "Recordar por qué vale la pena esperar", "El amor más allá de la distancia"],
+    correct: [0]
   }
 ];
 
@@ -43,9 +68,9 @@ export default function LoveQuiz({ onBack }: LoveQuizProps) {
 
   const handleAnswer = (index: number) => {
     if (selectedAnswer !== null) return;
-    
+
     setSelectedAnswer(index);
-    if (index === questions[currentQ].correct) {
+    if (questions[currentQ].correct.includes(index)) {
       setScore(score + 1);
     }
 
@@ -89,8 +114,8 @@ export default function LoveQuiz({ onBack }: LoveQuizProps) {
           className="text-center mb-8"
         >
           <Heart className="w-12 h-12 md:w-16 md:h-16 text-rose-300 mx-auto mb-4" />
-          <h1 className="text-3xl md:text-5xl font-bold text-rose-100 mb-2">Quiz del Amor</h1>
-          <p className="text-rose-200/70">Demuestra cuanto sabes sobre el amor</p>
+          <h1 className="text-3xl md:text-5xl font-bold text-rose-100 mb-2">Quiz de San Valentín</h1>
+          <p className="text-rose-200/70">Celebrando nuestro amor único 💕</p>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -124,20 +149,20 @@ export default function LoveQuiz({ onBack }: LoveQuizProps) {
                       selectedAnswer === null
                         ? "bg-rose-500/20 hover:bg-rose-500/30 border border-rose-300/30"
                         : selectedAnswer === index
-                        ? index === questions[currentQ].correct
+                        ? questions[currentQ].correct.includes(index)
                           ? "bg-green-500/30 border-2 border-green-400"
                           : "bg-red-500/30 border-2 border-red-400"
-                        : index === questions[currentQ].correct && showResult
+                        : questions[currentQ].correct.includes(index) && showResult
                         ? "bg-green-500/20 border border-green-400/50"
                         : "bg-rose-500/10 border border-rose-300/20 opacity-50"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-rose-50 text-sm md:text-base">{option}</span>
-                      {showResult && index === questions[currentQ].correct && (
+                      {showResult && questions[currentQ].correct.includes(index) && (
                         <Check className="w-5 h-5 text-green-400" />
                       )}
-                      {showResult && selectedAnswer === index && index !== questions[currentQ].correct && (
+                      {showResult && selectedAnswer === index && !questions[currentQ].correct.includes(index) && (
                         <X className="w-5 h-5 text-red-400" />
                       )}
                     </div>
@@ -152,15 +177,22 @@ export default function LoveQuiz({ onBack }: LoveQuizProps) {
               className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-rose-300/20 text-center"
             >
               <Trophy className="w-16 h-16 md:w-24 md:h-24 text-yellow-400 mx-auto mb-6" />
-              <h2 className="text-3xl md:text-4xl font-bold text-rose-50 mb-4">Resultado Final</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-rose-50 mb-4">¡Feliz San Valentín! 💕</h2>
               <p className="text-5xl md:text-7xl font-black text-rose-300 mb-4">{score}/{questions.length}</p>
               <p className="text-rose-200/70 mb-8">
                 {score === questions.length 
-                  ? "Perfecto! Eres un experto en amor" 
-                  : score >= 3 
-                  ? "Muy bien! Sabes mucho sobre el amor" 
-                  : "Sigue aprendiendo sobre el amor"}
+                  ? "¡Perfecto! Nos conocemos a la perfección 💕✨" 
+                  : score >= 8
+                  ? "¡Increíble! Nuestra conexión es muy fuerte 😊💗" 
+                  : score >= 6
+                  ? "¡Muy bien! Nos entendemos cada vez mejor 💭💕"
+                  : score >= 4
+                  ? "No está mal, seguimos conociéndonos 🥰💬"
+                  : "Cada día aprendemos más el uno del otro 💑❤️"}
               </p>
+              <div className="text-rose-100 text-lg mb-6 italic">
+                "La distancia es solo temporal, nuestro amor es para siempre"
+              </div>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

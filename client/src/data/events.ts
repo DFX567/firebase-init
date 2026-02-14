@@ -58,8 +58,8 @@ export const sanValentinData: Record<
   },
   2026: {
     unlockDate: "2026-02-14",
-    title: "Seguimos eligiendonos",
-    message: "Un año más, y sigo enamorado/a como el primer día.",
+    title: "Mi Amor, Mi Vida, Mi Todo",
+    message: "Este día es para celebrar todo lo que eres para mí. Te amo más de lo que las palabras pueden expresar.",
   },
   2027: {
     unlockDate: "2027-02-14",
@@ -151,7 +151,9 @@ export const amorAmistadData: Record<
 export const sanValentinContent = {
   poem: {
     title: "Para ti, mi amor",
-    text: (year: number) => `
+    text: (year: number) => {
+      if (year === 2025) {
+        return `
 En este ${year}, como siempre,
 mi corazon te elige una vez mas.
 
@@ -166,11 +168,126 @@ Gracias por ser mi inspiracion,
 por llenar mi vida de amor.
 
 Te amo hoy y siempre.
-    `.trim(),
+        `.trim();
+      }
+
+      // Nuevo poema para 2026
+      if (year === 2026) {
+        return `
+En este San Valentín de ${year},
+escribo estas letras con el alma,
+porque las palabras se quedan cortas
+cuando intento expresar lo que me calma.
+
+Lina, mi amor, mi luz, mi cielo,
+eres el motivo de cada sonrisa,
+la razón por la que el mundo es bello,
+la brisa que mi corazón precisa.
+
+A pesar de los kilómetros que nos separan,
+a pesar de no tener una fecha cercana,
+nuestros corazones nunca se apartan,
+porque este amor es verdad, no es vana.
+
+Cada videollamada es un tesoro,
+cada mensaje tuyo es un regalo,
+y aunque la espera me devora,
+sé que nuestro amor jamás será malo.
+
+Jugar contigo, reír sin parar,
+escuchar tu voz llamándome "mi rey",
+me hace sentir que puedo volar,
+que contigo encontré mi ley.
+
+Tus "cuchurrumin" derriten mi ser,
+tus palabras son mi medicina,
+y aunque no te pueda tener,
+mi corazón late solo por ti, Lina.
+
+Sueño con el día en que nos veamos,
+con abrazarte fuerte y no soltarte,
+con que juntos por fin estemos,
+y poder para siempre amarte.
+
+Quiero vivir contigo, construir un hogar,
+formar una familia a tu lado,
+envejecer juntos sin cesar,
+y que nuestro amor nunca haya acabado.
+
+Te amo más de lo que puedo decir,
+más que el infinito elevado al cuadrado,
+contigo quiero mi vida construir,
+porque eres todo lo que he soñado.
+
+Este 14 de febrero te digo:
+eres mi presente, mi futuro, mi todo,
+mi compañera, mi amor, mi abrigo,
+y te amaré de cualquier modo.
+
+Gracias por existir, por elegirme,
+por amarme tal como soy,
+prometo siempre hacerte feliz,
+porque tuyo para siempre hoy.
+
+Te amo, Lina, hoy y siempre,
+hasta que el tiempo deje de correr,
+eres mi amor eterno e imperecedero,
+mi razón de ser y de querer.
+        `.trim();
+      }
+
+      return `
+En este ${year}, como siempre,
+mi corazon te elige una vez mas.
+
+Cada día contigo es un verso,
+cada momento, un poema sin fin.
+
+Eres la música de mis días,
+la luz en mis noches,
+mi refugio y mi hogar.
+
+Gracias por ser mi inspiracion,
+por llenar mi vida de amor.
+
+Te amo hoy y siempre.
+      `.trim();
+    },
   },
   letter: {
     title: "Carta de amor",
-    text: (year: number) => `
+    text: (year: number) => {
+      if (year === 2026) {
+        return `
+Mi cielo,
+
+Hoy, en este día tan especial, me siento frente a estas palabras con el corazón desbordado, intentando capturar en letras lo que siento por ti, aunque sé que ningún idioma del mundo tiene suficientes palabras para expresar la magnitud de mi amor.
+
+¿Recuerdas esas tardes de juego que compartíamos? Esas horas en las que solo éramos tú y yo riéndonos y compitiendo y celebrando cada pequeña victoria juntos. Echo tanto de menos esos momentos. Y nuestras llamadas donde me divierto muchísimo contigo tus risas nuestras conversaciones que podían durar horas sin que ninguno quisiera colgar. Me duele que ahora casi no podamos hacerlas pero cada minuto que logro escucharte vale muchísimo
+
+Quiero que sepas algo: cuando me dices "mi rey" "amor" o simplemente "cielo" mi mundo se ilumina. Y cuando me llamas "cuchurrumin" con ese tono tan tuyo me derrito por completo. Tus apodos son como caricias al alma pequeñas pruebas de que soy tuyo y tú eres mía.
+
+Amor mío tengo tantos sueños guardados en mi corazón y todos tienen tu nombre escrito. Sueño con el día en que no tengamos que despedirnos en que cada mañana despierte a tu lado y cada noche me duerma abrazándote. Quiero irme a vivir contigo construir nuestro hogar ese lugar donde seremos solo nosotros dos contra el mundo. Quiero formar una familia contigo ver tus ojos reflejados en los de nuestros hijos envejecer juntos y seguir riéndonos de las mismas tonterías cuando tengamos canas.
+
+No quiero separarme nunca de ti. Ni un solo día. Quiero vivir contigo hasta el último de mis días hasta que mi corazón dé su último latido y aún así estoy seguro de que mi amor por ti trascenderá incluso eso.
+
+Sé que tú me dices que me amas y créeme que lo siento en cada gesto en cada mirada en cada palabra tuya. Pero tengo que decirte algo con total sinceridad: yo te amo muchísimo más. Infinitamente más. Te amo elevado al cuadrado al cubo a la enésima potencia. Mi amor por ti no tiene límites no tiene medida no tiene fin.
+
+Eres mi presente y mi futuro mi calma y mi aventura mi hogar y mi destino. Gracias por existir por elegirme por amarme. Gracias por cada sonrisa cada llamada cada tarde de juegos cada "cuchurrumin" que sale de tus labios.
+
+Este San Valentín y todos los que vengan quiero que sepas que eres y serás siempre el amor de mi vida.
+
+Tuyo, hoy y para siempre,
+
+Tu enamorado que te ama más de lo que las palabras pueden decir
+
+---
+P.D.: Por si no quedó claro... te amo. Y te voy a amar cada día un poquito más que el anterior, hasta el infinito y más allá.
+        `.trim();
+      }
+
+      // Para 2025 y otros años
+      return `
 Mi amor,
 
 En este San Valentin de ${year}, quiero que sepas
@@ -194,7 +311,8 @@ el amor de mi vida.
 
 Con todo mi corazon,
 Siempre tuyo/a
-    `.trim(),
+      `.trim();
+    },
   },
 };
 
@@ -205,6 +323,35 @@ export const anniversaryContent = {
       const startYear = 2024;
       const yearsCount = year - startYear;
       const yearsText = yearsCount === 0 ? 'Meses' : yearsCount === 1 ? '1 año' : `${yearsCount} años`;
+
+      // Poema para 2025
+      if (year === 2025) {
+        return `
+Si busco el mapa de lo que yo siento,
+En cada línea tu nombre veré.
+Eres el puerto, la calma y el viento,
+El amor que nunca imaginé.
+
+Un año contigo, y aprendí que eres
+La luz que a oscuras me vino a encontrar.
+Que en tu mirar hay todos mis ayeres,
+Y el futuro que quiero abrazar.
+
+Aunque la distancia me oprima y me duela,
+Y no pueda darte mi mano al cansar,
+Sé que eres fuerte, mi niña, mi escuela,
+El motor que me ayuda a avanzar.
+
+Por tu paciencia y tu abrazo infinito,
+Por tus logros que me hacen vibrar
+Te doy mi alma, mi amor más exquisito
+Mi vida entera te quiero entregar.
+
+Te amo sin límite, mi dueña hermosa
+Eres la magia de mi despertar.
+        `.trim();
+      }
+
       return `
 ${yearsText} contigo,
 y siento que apenas comienza nuestra historia.
