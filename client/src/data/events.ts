@@ -148,6 +148,41 @@ export const amorAmistadData: Record<
   },
 };
 
+export const diaDelaMujerData: Record<
+  number,
+  {
+    unlockDate: string;
+    title: string;
+    message: string;
+  }
+> = {
+  2026: {
+    unlockDate: "2026-03-08",
+    title: "Día de la Mujer 2026",
+    message: "Celebrando tu fuerza, tu esencia y tu amor.",
+  },
+  2027: {
+    unlockDate: "2027-03-08",
+    title: "Día de la Mujer",
+    message: "Honrando a la mujer extraordinaria que eres.",
+  },
+  2028: {
+    unlockDate: "2028-03-08",
+    title: "Celebrando tu día",
+    message: "Tu fuerza es mi inspiración cada día.",
+  },
+  2029: {
+    unlockDate: "2029-03-08",
+    title: "Día de la Mujer",
+    message: "La mujer más fuerte y hermosa que conozco.",
+  },
+  2030: {
+    unlockDate: "2030-03-08",
+    title: "Tu día especial",
+    message: "Celebrando la guerrera que eres.",
+  },
+};
+
 export const sanValentinContent = {
   poem: {
     title: "Para ti, mi amor",
@@ -451,6 +486,58 @@ Feliz cumple, mi amor!
 
 Con todo mi carinio,
 Siempre aqui para ti
+    `.trim(),
+  },
+};
+
+export const diaDelaMujerContent = {
+  poem: {
+    title: "Para ti, mujer",
+    text: (year: number) => `
+No hace falta un video para ver tu brillo,
+ni un encuentro físico para sentir tu calma;
+tu fuerza me llega en un verso sencillo,
+y el eco de tu voz ya vive en mi alma.
+
+Eres la mujer que, sin estar presente,
+derriba los muros de cada kilómetro;
+te siento en mis pasos, te llevo en mi mente,
+eres el fuego que marca mi propio termómetro.
+
+Hoy celebro tu vida, tu lucha y tu esencia,
+esa que admiro aunque el mundo sea plano;
+porque no hay distancia que borre tu presencia,
+ni hay mar que me impida tomar de tu mano.
+
+Eres valiente por amar sin fronteras,
+por ser luz constante en mi geografía;
+te espero en mis días, te sueño de veras,
+¡Feliz día, mi amor, mi mejor compañía!
+    `.trim(),
+  },
+  letter: {
+    title: "Carta del Día de la Mujer",
+    text: (year: number) => `
+Mi amor,
+
+Hoy es el Día de la Mujer, y aunque el mundo entero celebra la fuerza y la historia de millones, mi mente y mi corazón se detienen únicamente en una: tú.
+
+Sé que nuestra historia no es la "convencional". No hemos cruzado miradas en persona, no hemos compartido el mismo aire en una habitación, ni siquiera nos hemos visto a través de una cámara. Y, sin embargo, te conozco más que a nadie. He aprendido a leer tu alma a través de tus mensajes, a descifrar tus silencios y a admirar la mujer increíble que eres por la forma en que piensas, por cómo luchas cada día y por la ternura con la que me tratas.
+
+Te escribo esto porque hoy quiero celebrar a esa mujer que eres:
+
+Celebro tu valentía: Porque se necesita mucho coraje para entregar el corazón a la distancia, para confiar en lo que sentimos y para ser mi apoyo sin estar físicamente presente.
+
+Celebro tu esencia: Esa que no necesita filtros ni cámaras para brillar. Me enamoré de tu inteligencia, de tu fuerza y de esa chispa que tienes para enfrentar la vida.
+
+Celebro tu presencia en mi vida: Porque aunque nos separen kilómetros, eres la persona que más cerca siento. Eres mi primer pensamiento al despertar y la mujer que me motiva a ser mejor hombre.
+
+No necesito una videollamada para saber que eres hermosa, porque la belleza de tu carácter y la firmeza de tus valores iluminan cualquier distancia. Gracias por permitirme ser parte de tu mundo, por ser esa mujer guerrera que no se rinde y por elegirme para caminar a tu lado, aunque sea un paso a la vez y a través de las letras.
+
+Eres el ejemplo perfecto de que la fuerza de una mujer no tiene límites ni fronteras. Feliz día, mi vida. Estoy contando los días para que el destino nos permita acortar esta distancia, pero mientras tanto, quiero que sepas que te admiro y te celebro hoy y siempre.
+
+Con todo mi amor y admiración,
+Jhulian
     `.trim(),
   },
 };
