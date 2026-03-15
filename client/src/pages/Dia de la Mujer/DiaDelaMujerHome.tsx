@@ -116,7 +116,7 @@ export default function DiaDelaMujerHome({
             </div>
           </motion.div>
 
-          <YearSelector year={year} onChange={setYear} theme="default" />
+          <YearSelector year={year} onChange={setYear} theme="women" />
 
           <DiaDelaMujerGate unlockDate={data.unlockDate}>
             <motion.div
