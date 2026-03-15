@@ -1,69 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Send, Clock, Heart, Trash2, Plus } from "lucide-react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
-import type { Message, InsertMessage } from "@shared/schema";
 
 interface TimeCapsuleProps {
   onBack: () => void;
 }
 
+interface CapsuleMessage {
+  id: string;
+  message: string;
+  date: string;
+  author: string;
+}
+
+const STORAGE_KEY = "time-capsule-messages";
+
 export default function TimeCapsule({ onBack }: TimeCapsuleProps) {
-  const { toast } = useToast();
+  const [messages, setMessages] = useState<CapsuleMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [author, setAuthor] = useState("");
   const [isWriting, setIsWriting] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<CapsuleMessage | null>(null);
 
-  const { data: messages = [], isLoading } = useQuery<Message[]>({
-    queryKey: ["/api/messages"],
-  });
-
-  const createMutation = useMutation({
-    mutationFn: async (message: InsertMessage) => {
-      const res = await apiRequest("POST", "/api/messages", message);
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
-      setNewMessage("");
-      setAuthor("");
-      setIsWriting(false);
-      toast({
-        title: "Mensaje enviado ❤️",
-        description: "Mensaje guardado en la base de datos y notificación enviada en tiempo real.",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "No se pudo guardar el mensaje.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/messages/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
-      setSelectedMessage(null);
-      toast({
-        title: "Mensaje eliminado",
-      });
-    },
-  });
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      setMessages(JSON.parse(saved));
+    }
+  }, []);
 
   const saveMessage = () => {
     if (!newMessage.trim()) return;
-    createMutation.mutate({
+
+    const message: CapsuleMessage = {
+      id: Date.now().toString(),
       message: newMessage.trim(),
-      author: author.trim() || "Anónimo",
-    });
+      date: new Date().toLocaleDateString("es-ES", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      }),
+      author: author.trim() || "Anónimo"
+    };
+
+    const updated = [message, ...messages];
+    setMessages(updated);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setNewMessage("");
+    setAuthor("");
+    setIsWriting(false);
+  };
+
+  const deleteMessage = (id: string) => {
+    const updated = messages.filter(m => m.id !== id);
+    setMessages(updated);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setSelectedMessage(null);
   };
 
   return (
@@ -89,7 +83,7 @@ export default function TimeCapsule({ onBack }: TimeCapsuleProps) {
             <Clock className="w-10 h-10 md:w-12 md:h-12 text-purple-300" />
           </div>
           <h1 className="text-2xl md:text-4xl font-bold text-purple-100 mb-2">Cápsula del Tiempo</h1>
-          <p className="text-purple-200/70 text-sm">Mensajes en tiempo real con Neon DB</p>
+          <p className="text-purple-200/70 text-sm">Guarda mensajes especiales para el futuro</p>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -104,12 +98,12 @@ export default function TimeCapsule({ onBack }: TimeCapsuleProps) {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2 text-purple-200/60 text-sm">
                   <Clock className="w-4 h-4" />
-                  <span>{new Date(selectedMessage.createdAt).toLocaleDateString("es-ES")}</span>
+                  <span>{selectedMessage.date}</span>
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={() => deleteMutation.mutate(selectedMessage.id)}
+                  onClick={() => deleteMessage(selectedMessage.id)}
                   className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -149,7 +143,7 @@ export default function TimeCapsule({ onBack }: TimeCapsuleProps) {
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-purple-200/70 text-sm mb-2">Tu nombre</label>
+                  <label className="block text-purple-200/70 text-sm mb-2">Tu nombre (opcional)</label>
                   <input
                     type="text"
                     value={author}
@@ -164,7 +158,7 @@ export default function TimeCapsule({ onBack }: TimeCapsuleProps) {
                   <textarea
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Escribe algo especial..."
+                    placeholder="Escribe algo especial para el futuro..."
                     rows={5}
                     className="w-full px-4 py-3 bg-purple-900/30 border border-purple-300/20 rounded-xl text-purple-50 placeholder:text-purple-300/40 focus:outline-none focus:border-purple-400/50 resize-none"
                   />
@@ -184,11 +178,11 @@ export default function TimeCapsule({ onBack }: TimeCapsuleProps) {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={saveMessage}
-                  disabled={!newMessage.trim() || !author.trim() || createMutation.isPending}
+                  disabled={!newMessage.trim()}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-purple-500 hover:bg-purple-600 disabled:bg-purple-500/30 disabled:cursor-not-allowed rounded-xl text-white font-semibold"
                 >
                   <Send className="w-4 h-4" />
-                  {createMutation.isPending ? "Enviando..." : "Enviar ❤️"}
+                  Guardar
                 </motion.button>
               </div>
             </motion.div>
@@ -209,16 +203,15 @@ export default function TimeCapsule({ onBack }: TimeCapsuleProps) {
                 Escribir nuevo mensaje
               </motion.button>
 
-              {isLoading ? (
-                <div className="text-center p-8 text-purple-200/50">Cargando mensajes...</div>
-              ) : messages.length === 0 ? (
+              {messages.length === 0 ? (
                 <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-purple-300/10 text-center">
                   <div className="text-5xl mb-4">💌</div>
-                  <p className="text-purple-200/60">Aún no hay mensajes</p>
+                  <p className="text-purple-200/60">Aún no hay mensajes guardados</p>
+                  <p className="text-purple-200/40 text-sm mt-2">Escribe tu primer mensaje para la cápsula del tiempo</p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <p className="text-purple-200/50 text-sm mb-4">{messages.length} mensaje{messages.length !== 1 ? 's' : ''}</p>
+                  <p className="text-purple-200/50 text-sm mb-4">{messages.length} mensaje{messages.length !== 1 ? 's' : ''} guardado{messages.length !== 1 ? 's' : ''}</p>
                   {messages.map((msg, index) => (
                     <motion.button
                       key={msg.id}
@@ -233,7 +226,7 @@ export default function TimeCapsule({ onBack }: TimeCapsuleProps) {
                           <Heart className="w-3 h-3 fill-purple-300" />
                           {msg.author}
                         </span>
-                        <span className="text-purple-200/40 text-xs">{new Date(msg.createdAt).toLocaleDateString("es-ES")}</span>
+                        <span className="text-purple-200/40 text-xs">{msg.date}</span>
                       </div>
                       <p className="text-purple-100 line-clamp-2">{msg.message}</p>
                     </motion.button>

@@ -15,14 +15,13 @@ import AnniversaryRouter from "@/pages/Anniversary/AnniversaryRouter";
 import CumpleRouter from "@/pages/Cumple/CumpleRouter";
 import SanValentinRouter from "@/pages/San Valentin/SanValentinRouter";
 import AmorAmistadRouter from "@/pages/Amor y Amistad/AmorAmistadRouter";
-import DiaDelaMujerRouter from "@/pages/Dia de la Mujer/DiaDelaMujerRouter";
 
 const ALLOWED_EMAILS = [
   "dfx1mas87@gmail.com",
   "lfbecerraaponte@gmail.com",
 ];
 
-type Section = "hub" | "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "diadelmujer";
+type Section = "hub" | "anniversary" | "cumple" | "sanvalentin" | "amoramistad";
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -98,10 +97,6 @@ export default function App() {
 
   if (section === "amoramistad") {
     return <AmorAmistadRouter onBack={() => setSection("hub")} />;
-  }
-
-  if (section === "diadelmujer") {
-    return <DiaDelaMujerRouter onBack={() => setSection("hub")} />;
   }
 
   return <Hub onSelect={setSection} onLogout={handleLogout} user={user} />;

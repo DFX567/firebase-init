@@ -6,7 +6,7 @@ import SecretMenu from "@/components/SecretMenu";
 import type { User } from "firebase/auth";
 
 interface HubProps {
-  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "diadelmujer") => void;
+  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad") => void;
   onLogout: () => void;
   user: User;
 }
@@ -54,16 +54,6 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
       emoji: "🫶",
       description: "Nuestra amistad y amor",
       delay: 0.5
-    },
-    {
-      id: "diadelmujer" as const,
-      title: "Día de la Mujer",
-      icon: Heart,
-      gradient: "from-purple-400 via-pink-400 to-purple-500",
-      bgGlow: "bg-purple-500/20",
-      emoji: "👩",
-      description: "08 Mar",
-      delay: 0.6
     },
   ];
 
