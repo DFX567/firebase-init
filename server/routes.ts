@@ -1,9 +1,9 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
+import type { Server } from "http";
 import { storage } from "./storage";
 import { insertMessageSchema } from "@shared/schema";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(httpServer: Server, app: Express): Promise<Server> {
   app.get("/api/messages", async (_req, res) => {
     try {
       const messages = await storage.getMessages();
@@ -41,6 +41,5 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
   return httpServer;
 }
