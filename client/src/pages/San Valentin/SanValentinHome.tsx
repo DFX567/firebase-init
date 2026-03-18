@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Heart, Mail, BookOpen, Sparkles, Gamepad2, Grid3X3 } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Heart, Mail, BookOpen, Sparkles } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 import YearSelector from "@/components/YearSelector";
 import ValentineGate from "./ValentineGate";
@@ -11,19 +11,14 @@ interface SanValentinHomeProps {
   onBack: () => void;
   onViewLetter: (year: number) => void;
   onViewPoem: (year: number) => void;
-  onViewQuiz: () => void;
-  onViewMemory: () => void;
 }
 
 export default function SanValentinHome({ 
   onBack, 
   onViewLetter,
   onViewPoem,
-  onViewQuiz,
-  onViewMemory
 }: SanValentinHomeProps) {
   const [year, setYear] = useState(2025);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const data = sanValentinData[year];
   const countdown = useSmartCountdown(2, 14, year);
 
@@ -142,8 +137,6 @@ export default function SanValentinHome({
                   whileHover={{ y: -4, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => onViewLetter(year)}
-                  onHoverStart={() => setHoveredCard('letter')}
-                  onHoverEnd={() => setHoveredCard(null)}
                   data-testid="button-letter"
                   className="bg-gradient-to-br from-rose-500/20 to-pink-500/20 backdrop-blur-xl rounded-2xl p-5 md:p-6 border border-rose-300/30 hover:border-rose-300/50 transition-all"
                 >
@@ -163,38 +156,6 @@ export default function SanValentinHome({
                   <h3 className="text-lg md:text-xl font-bold text-pink-50">Poema</h3>
                   <p className="text-xs md:text-sm text-pink-200/70">Versos de amor</p>
                 </motion.button>
-              </div>
-
-              <div className="pt-4">
-                <h3 className="text-center text-rose-200/70 text-sm mb-4 flex items-center justify-center gap-2">
-                  <Gamepad2 className="w-4 h-4" />
-                  Minijuegos
-                </h3>
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
-                  <motion.button
-                    whileHover={{ y: -4, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onViewQuiz}
-                    data-testid="button-quiz"
-                    className="bg-gradient-to-br from-red-500/20 to-rose-500/20 backdrop-blur-xl rounded-2xl p-5 md:p-6 border border-red-300/30 hover:border-red-300/50 transition-all"
-                  >
-                    <Heart className="w-8 h-8 md:w-10 md:h-10 text-red-200 mx-auto mb-3" />
-                    <h3 className="text-base md:text-lg font-bold text-red-50">Quiz del Amor</h3>
-                    <p className="text-xs text-red-200/70">Pon a prueba tu amor</p>
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ y: -4, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onViewMemory}
-                    data-testid="button-memory"
-                    className="bg-gradient-to-br from-rose-500/20 to-pink-500/20 backdrop-blur-xl rounded-2xl p-5 md:p-6 border border-rose-300/30 hover:border-rose-300/50 transition-all"
-                  >
-                    <Grid3X3 className="w-8 h-8 md:w-10 md:h-10 text-rose-200 mx-auto mb-3" />
-                    <h3 className="text-base md:text-lg font-bold text-rose-50">Memoria</h3>
-                    <p className="text-xs text-rose-200/70">Encuentra las parejas</p>
-                  </motion.button>
-                </div>
               </div>
             </motion.div>
           </ValentineGate>
