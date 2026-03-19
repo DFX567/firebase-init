@@ -10,18 +10,19 @@ import {
 
 import LoginScreen from "@/components/LoginScreen";
 import Hub from "@/pages/Hub";
-
 import AnniversaryRouter from "@/pages/Anniversary/AnniversaryRouter";
 import CumpleRouter from "@/pages/Cumple/CumpleRouter";
 import SanValentinRouter from "@/pages/San Valentin/SanValentinRouter";
 import AmorAmistadRouter from "@/pages/Amor y Amistad/AmorAmistadRouter";
+import GamesHub from "@/pages/GamesHub/GamesHub";
+import MemoriesHub from "@/pages/MemoriesHub/MemoriesHub";
 
 const ALLOWED_EMAILS = [
   "dfx1mas87@gmail.com",
   "lfbecerraaponte@gmail.com",
 ];
 
-type Section = "hub" | "anniversary" | "cumple" | "sanvalentin" | "amoramistad";
+type Section = "hub" | "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "games" | "memories";
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -83,21 +84,12 @@ export default function App() {
     return <LoginScreen onLogin={handleGoogleLogin} error={error} />;
   }
 
-  if (section === "anniversary") {
-    return <AnniversaryRouter onBack={() => setSection("hub")} />;
-  }
-
-  if (section === "cumple") {
-    return <CumpleRouter onBack={() => setSection("hub")} />;
-  }
-
-  if (section === "sanvalentin") {
-    return <SanValentinRouter onBack={() => setSection("hub")} />;
-  }
-
-  if (section === "amoramistad") {
-    return <AmorAmistadRouter onBack={() => setSection("hub")} />;
-  }
+  if (section === "anniversary") return <AnniversaryRouter onBack={() => setSection("hub")} />;
+  if (section === "cumple") return <CumpleRouter onBack={() => setSection("hub")} />;
+  if (section === "sanvalentin") return <SanValentinRouter onBack={() => setSection("hub")} />;
+  if (section === "amoramistad") return <AmorAmistadRouter onBack={() => setSection("hub")} />;
+  if (section === "games") return <GamesHub onBack={() => setSection("hub")} />;
+  if (section === "memories") return <MemoriesHub onBack={() => setSection("hub")} />;
 
   return <Hub onSelect={setSection} onLogout={handleLogout} user={user} />;
 }
