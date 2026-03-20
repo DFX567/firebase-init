@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Heart, Mail, Sparkles, Calendar, Gamepad2, Clock, Layers } from "lucide-react";
+import { ArrowLeft, Heart, Mail, Sparkles, Calendar } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 import YearSelector from "@/components/YearSelector";
 import AnniversaryGate from "./AnniversaryGate";
@@ -10,11 +10,9 @@ import { useSmartCountdown } from "@/hooks/useSmartCountdown";
 interface AnniversaryHomeProps {
   onBack: () => void;
   onViewLetter: (year: number) => void;
-  onViewTimeline: () => void;
-  onViewCards: () => void;
 }
 
-export default function AnniversaryHome({ onBack, onViewLetter, onViewTimeline, onViewCards }: AnniversaryHomeProps) {
+export default function AnniversaryHome({ onBack, onViewLetter }: AnniversaryHomeProps) {
   const [year, setYear] = useState(2024);
   const data = anniversaryData[year];
   const countdown = useSmartCountdown(11, 2, year);
@@ -140,38 +138,6 @@ export default function AnniversaryHome({ onBack, onViewLetter, onViewTimeline, 
               <h3 className="text-xl md:text-2xl font-bold text-rose-50">Carta de Amor</h3>
               <p className="text-sm text-rose-200/70">Palabras desde el corazon</p>
             </motion.button>
-
-            <div className="pt-4">
-              <h3 className="text-center text-rose-200/70 text-sm mb-4 flex items-center justify-center gap-2">
-                <Gamepad2 className="w-4 h-4" />
-                Minijuegos
-              </h3>
-              <div className="grid grid-cols-2 gap-3 md:gap-4">
-                <motion.button
-                  whileHover={{ y: -4, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={onViewTimeline}
-                  data-testid="button-timeline"
-                  className="bg-gradient-to-br from-pink-500/20 to-rose-500/20 backdrop-blur-xl rounded-2xl p-5 md:p-6 border border-pink-300/30 hover:border-pink-300/50 transition-all"
-                >
-                  <Clock className="w-8 h-8 md:w-10 md:h-10 text-pink-200 mx-auto mb-3" />
-                  <h3 className="text-base md:text-lg font-bold text-pink-50">Linea del Tiempo</h3>
-                  <p className="text-xs text-pink-200/70">Ordena nuestra historia</p>
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ y: -4, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={onViewCards}
-                  data-testid="button-cards"
-                  className="bg-gradient-to-br from-rose-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl p-5 md:p-6 border border-rose-300/30 hover:border-rose-300/50 transition-all"
-                >
-                  <Layers className="w-8 h-8 md:w-10 md:h-10 text-rose-200 mx-auto mb-3" />
-                  <h3 className="text-base md:text-lg font-bold text-rose-50">Cartas de Amor</h3>
-                  <p className="text-xs text-rose-200/70">Mensajes especiales</p>
-                </motion.button>
-              </div>
-            </div>
           </motion.div>
         </AnniversaryGate>
       </div>

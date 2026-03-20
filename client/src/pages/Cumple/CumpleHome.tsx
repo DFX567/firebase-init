@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Cake, Mail, Sparkles, PartyPopper, Star, Gift, Gamepad2, Clock } from "lucide-react";
+import { ArrowLeft, Cake, Mail, Sparkles, PartyPopper, Star } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 import YearSelector from "@/components/YearSelector";
 import BirthdayGate from "./BirthdayGate";
@@ -10,11 +10,9 @@ import { useSmartCountdown } from "@/hooks/useSmartCountdown";
 interface CumpleHomeProps {
   onBack: () => void;
   onViewLetter: (year: number) => void;
-  onViewCatcher: () => void;
-  onViewCapsule: () => void;
 }
 
-export default function CumpleHome({ onBack, onViewLetter, onViewCatcher, onViewCapsule }: CumpleHomeProps) {
+export default function CumpleHome({ onBack, onViewLetter }: CumpleHomeProps) {
   const [year, setYear] = useState(2024);
   const data = cumpleData[year];
   const countdown = useSmartCountdown(12, 19, year);
@@ -141,38 +139,6 @@ export default function CumpleHome({ onBack, onViewLetter, onViewCatcher, onView
                 <h3 className="text-xl md:text-2xl font-bold text-purple-50">Carta Especial</h3>
                 <p className="text-sm text-purple-200/70">Mis mejores deseos para ti</p>
               </motion.button>
-
-              <div className="pt-4">
-                <h3 className="text-center text-purple-200/70 text-sm mb-4 flex items-center justify-center gap-2">
-                  <Gamepad2 className="w-4 h-4" />
-                  Minijuegos
-                </h3>
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
-                  <motion.button
-                    whileHover={{ y: -4, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onViewCatcher}
-                    data-testid="button-catcher"
-                    className="bg-gradient-to-br from-violet-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl p-5 md:p-6 border border-violet-300/30 hover:border-violet-300/50 transition-all"
-                  >
-                    <Gift className="w-8 h-8 md:w-10 md:h-10 text-violet-200 mx-auto mb-3" />
-                    <h3 className="text-base md:text-lg font-bold text-violet-50">Atrapa Regalos</h3>
-                    <p className="text-xs text-violet-200/70">Atrapa todos los regalos</p>
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ y: -4, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onViewCapsule}
-                    data-testid="button-capsule"
-                    className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl p-5 md:p-6 border border-indigo-300/30 hover:border-indigo-300/50 transition-all"
-                  >
-                    <Clock className="w-8 h-8 md:w-10 md:h-10 text-indigo-200 mx-auto mb-3" />
-                    <h3 className="text-base md:text-lg font-bold text-indigo-50">Cápsula del Tiempo</h3>
-                    <p className="text-xs text-indigo-200/70">Mensajes para el futuro</p>
-                  </motion.button>
-                </div>
-              </div>
             </motion.div>
           </BirthdayGate>
         </div>

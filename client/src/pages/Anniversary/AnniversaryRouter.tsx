@@ -1,14 +1,12 @@
 import { useState } from "react";
 import AnniversaryHome from "./AnniversaryHome";
 import LoveLetter from "./LoveLetter";
-import MemoryTimeline from "./games/MemoryTimeline";
-import LoveCards from "./games/LoveCards";
 
 interface AnniversaryRouterProps {
   onBack: () => void;
 }
 
-type View = 'home' | 'letter' | 'timeline' | 'cards';
+type View = 'home' | 'letter';
 
 export default function AnniversaryRouter({ onBack }: AnniversaryRouterProps) {
   const [view, setView] = useState<View>('home');
@@ -18,20 +16,10 @@ export default function AnniversaryRouter({ onBack }: AnniversaryRouterProps) {
     return <LoveLetter year={year} onBack={() => setView('home')} />;
   }
 
-  if (view === 'timeline') {
-    return <MemoryTimeline onBack={() => setView('home')} />;
-  }
-
-  if (view === 'cards') {
-    return <LoveCards onBack={() => setView('home')} />;
-  }
-
   return (
     <AnniversaryHome 
       onBack={onBack} 
       onViewLetter={(y) => { setYear(y); setView('letter'); }}
-      onViewTimeline={() => setView('timeline')}
-      onViewCards={() => setView('cards')}
     />
   );
 }

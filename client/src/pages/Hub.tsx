@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Cake, Calendar, LogOut, Sparkles, Users, Gamepad2, Star } from "lucide-react";
+import { Heart, Cake, Calendar, LogOut, Sparkles, Users, Gamepad2, Star, Flower2 } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 import SecretMenu from "@/components/SecretMenu";
 import type { User } from "firebase/auth";
 
 interface HubProps {
-  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "games" | "memories") => void;
+  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "floresamarillas" | "games" | "memories") => void;
   onLogout: () => void;
   user: User;
 }
@@ -67,6 +67,19 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
       description: "20 de Septiembre",
       delay: 0.5,
     },
+    {
+      id: "floresamarillas" as const,
+      title: "Flores Amarillas",
+      icon: Flower2,
+      gradient: "from-yellow-400 via-amber-400 to-yellow-500",
+      bgCard: "from-yellow-400/10 to-amber-400/10",
+      border: "border-yellow-300/20",
+      hoverBorder: "hover:border-yellow-300/50",
+      glow: "bg-yellow-400/20",
+      emoji: "🌻",
+      description: "21 de Marzo",
+      delay: 0.6,
+    },
   ];
 
   const extraHubs = [
@@ -81,7 +94,7 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
       hoverBorder: "hover:border-cyan-300/50",
       glow: "bg-cyan-500/20",
       icon: Gamepad2,
-      delay: 0.6,
+      delay: 0.75,
     },
     {
       id: "memories" as const,
@@ -94,7 +107,7 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
       hoverBorder: "hover:border-teal-300/50",
       glow: "bg-teal-500/20",
       icon: Star,
-      delay: 0.7,
+      delay: 0.85,
     },
   ];
 
@@ -179,7 +192,7 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-5">
           {mainSections.map((section) => {
             const Icon = section.icon;
             return (
