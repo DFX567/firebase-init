@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
-import { getContent, getContentKey, floresDefaultLetter } from "@/utils/contentOverrides";
+import { useFirestoreContent } from "@/hooks/useFirestoreContent";
 import { ArrowLeft, FastForward, SkipForward } from "lucide-react";
 
 interface FloresLetterProps {
@@ -19,12 +19,8 @@ function SpinningSunflower({ size = 60, style }: { size?: number; style?: React.
         {[0, 40, 80, 120, 160, 200, 240, 280, 320].map((angle) => (
           <ellipse
             key={angle}
-            cx="30"
-            cy="30"
-            rx="7"
-            ry="14"
-            fill="#facc15"
-            opacity="0.9"
+            cx="30" cy="30" rx="7" ry="14"
+            fill="#facc15" opacity="0.9"
             transform={`rotate(${angle}, 30, 30) translate(0, -16)`}
           />
         ))}
@@ -35,9 +31,7 @@ function SpinningSunflower({ size = 60, style }: { size?: number; style?: React.
             key={a}
             cx={30 + 5 * Math.cos((a * Math.PI) / 180)}
             cy={30 + 5 * Math.sin((a * Math.PI) / 180)}
-            r="1.5"
-            fill="#451a03"
-            opacity="0.5"
+            r="1.5" fill="#451a03" opacity="0.5"
           />
         ))}
       </svg>
@@ -46,8 +40,11 @@ function SpinningSunflower({ size = 60, style }: { size?: number; style?: React.
 }
 
 export default function FloresLetter({ onBack }: FloresLetterProps) {
-  const letterText = getContent(getContentKey("flores", "letter"), floresDefaultLetter);
-  const { display, speedUp, skip, done } = useTypewriter(letterText);
+  const { content, loading } = useFirestoreContent({
+    section: "flores",
+    type: "letter",
+  });
+  const { display, speedUp, skip, done } = useTypewriter(loading ? "" : content);
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: "linear-gradient(135deg, #fefce8 0%, #fef9c3 40%, #fef08a 100%)" }}>
@@ -87,10 +84,7 @@ export default function FloresLetter({ onBack }: FloresLetterProps) {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8 md:mb-10"
         >
-          <h2
-            className="text-3xl md:text-5xl font-black mb-3 tracking-tight"
-            style={{ color: "#92400e" }}
-          >
+          <h2 className="text-3xl md:text-5xl font-black mb-3 tracking-tight" style={{ color: "#92400e" }}>
             Día de las Flores Amarillas
           </h2>
           <p className="text-amber-700/70 text-base md:text-lg">21 de Marzo</p>
@@ -129,21 +123,32 @@ export default function FloresLetter({ onBack }: FloresLetterProps) {
               backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(251,191,36,0.8) 28px, rgba(251,191,36,0.8) 29px)"
             }} />
 
-            <div className="relative">
-              <pre
-                className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans"
-                style={{ color: "#451a03" }}
-              >
-                {display}
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.7, repeat: Infinity }}
-                  className="inline-block ml-0.5"
-                  style={{ color: "#d97706" }}
+            <div className="relative min-h-[80px]">
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 rounded-full"
+                    style={{ borderColor: "rgba(251,191,36,0.3)", borderTopColor: "#d97706" }}
+                  />
+                </div>
+              ) : (
+                <pre
+                  className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans"
+                  style={{ color: "#451a03" }}
                 >
-                  |
-                </motion.span>
-              </pre>
+                  {display}
+                  <motion.span
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.7, repeat: Infinity }}
+                    className="inline-block ml-0.5"
+                    style={{ color: "#d97706" }}
+                  >
+                    |
+                  </motion.span>
+                </pre>
+              )}
             </div>
 
             <div className="flex items-center justify-center gap-2 mt-8 pt-6" style={{ borderTop: "1px solid rgba(251,191,36,0.3)" }}>
@@ -154,7 +159,7 @@ export default function FloresLetter({ onBack }: FloresLetterProps) {
           </div>
         </motion.div>
 
-        {!done && (
+        {!loading && !done && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -171,7 +176,6 @@ export default function FloresLetter({ onBack }: FloresLetterProps) {
               <FastForward className="w-4 h-4 md:w-5 md:h-5" />
               <span className="font-semibold text-sm md:text-base">Acelerar x2</span>
             </motion.button>
-
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
@@ -185,15 +189,13 @@ export default function FloresLetter({ onBack }: FloresLetterProps) {
           </motion.div>
         )}
 
-        {done && (
+        {!loading && done && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center mt-6"
           >
-            <p className="text-sm md:text-base" style={{ color: "#b45309" }}>
-              🌻 Mensaje completo 🌻
-            </p>
+            <p className="text-sm md:text-base" style={{ color: "#b45309" }}>🌻 Mensaje completo 🌻</p>
           </motion.div>
         )}
       </div>

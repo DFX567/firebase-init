@@ -1,5 +1,29 @@
+import { db } from "@/lib/firebase";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  onSnapshot,
+  type Unsubscribe,
+} from "firebase/firestore";
 import { sanValentinContent, anniversaryContent, cumpleContent } from "@/data/events";
 
+// ─── Colección en Firestore ───────────────────────────────────────────────────
+const COLLECTION = "siteContent";
+
+// ─── Key helpers (sin cambios, compatibles con AdminEditor) ───────────────────
+export const getContentKey = (
+  section: string,
+  type: string,
+  year?: number,
+  day?: number
+): string => {
+  if (section === "memories") return `edit-memories-poem-${day}`;
+  if (section === "flores") return "edit-flores-letter";
+  return `edit-${section}-${type}-${year}`;
+};
+
+// ─── Contenido por defecto ────────────────────────────────────────────────────
 export const floresDefaultLetter = `Hoy, 21 de marzo, el mundo se viste de amarillo
 y yo solo puedo pensar en ti.
 
@@ -113,30 +137,6 @@ el corazón se vuelve un lago.`,
   },
 ];
 
-export const getContentKey = (
-  section: string,
-  type: string,
-  year?: number,
-  day?: number
-): string => {
-  if (section === "memories") return `edit-memories-poem-${day}`;
-  if (section === "flores") return "edit-flores-letter";
-  return `edit-${section}-${type}-${year}`;
-};
-
-export const getContent = (key: string, defaultContent: string): string => {
-  try {
-    const stored = localStorage.getItem(key);
-    return stored ?? defaultContent;
-  } catch {
-    return defaultContent;
-  }
-};
-
-export const setContent = (key: string, content: string): void => {
-  localStorage.setItem(key, content);
-};
-
 export const getDefaultContent = (
   section: string,
   type: string,
@@ -161,4 +161,61 @@ export const getDefaultContent = (
     default:
       return "";
   }
+};
+
+// ─── Cache local para evitar parpadeos ───────────────────────────────────────
+const cache: Record<string, string> = {};
+
+// ─── Leer contenido desde Firestore (una sola vez) ───────────────────────────
+export const getContent = async (
+  key: string,
+  defaultContent: string
+): Promise<string> => {
+  // Si ya está en caché, devuelve inmediatamente
+  if (cache[key] !== undefined) return cache[key];
+
+  try {
+    const ref = doc(db, COLLECTION, key);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const value = snap.data().value as string;
+      cache[key] = value;
+      return value;
+    }
+  } catch (err) {
+    console.error("Error leyendo contenido:", err);
+  }
+
+  cache[key] = defaultContent;
+  return defaultContent;
+};
+
+// ─── Guardar contenido en Firestore ──────────────────────────────────────────
+export const setContent = async (key: string, content: string): Promise<void> => {
+  try {
+    const ref = doc(db, COLLECTION, key);
+    await setDoc(ref, { value: content, updatedAt: new Date().toISOString() });
+    cache[key] = content; // actualizar caché local
+  } catch (err) {
+    console.error("Error guardando contenido:", err);
+    throw err;
+  }
+};
+
+// ─── Escuchar cambios en tiempo real (para mostrar cambios sin recargar) ──────
+export const subscribeToContent = (
+  key: string,
+  defaultContent: string,
+  callback: (content: string) => void
+): Unsubscribe => {
+  const ref = doc(db, COLLECTION, key);
+  return onSnapshot(ref, (snap) => {
+    if (snap.exists()) {
+      const value = snap.data().value as string;
+      cache[key] = value;
+      callback(value);
+    } else {
+      callback(defaultContent);
+    }
+  });
 };
