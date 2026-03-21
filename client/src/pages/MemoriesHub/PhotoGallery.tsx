@@ -1,6 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Camera, Plus, Trash2, X, ImageIcon, Heart } from "lucide-react";
+import { ArrowLeft, Camera, Plus, Trash2, X, ImageIcon, Heart, Loader2 } from "lucide-react";
+import { db } from "@/lib/firebase";
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
 
 interface PhotoGalleryProps {
   onBack: () => void;
@@ -9,59 +19,98 @@ interface PhotoGalleryProps {
 interface Photo {
   id: string;
   src: string;
+  publicId: string;
   caption: string;
   date: string;
 }
 
-const STORAGE_KEY = "gallery-photos";
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+const COLLECTION = "gallery";
+
+async function uploadToCloudinary(file: File): Promise<{ url: string; publicId: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+  formData.append("folder", "nuestro-refugio");
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error("Error subiendo imagen");
+  const data = await res.json();
+  return { url: data.secure_url, publicId: data.public_id };
+}
 
 export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [selected, setSelected] = useState<Photo | null>(null);
   const [caption, setCaption] = useState("");
-  const [pendingPhoto, setPendingPhoto] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingPreview, setPendingPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Escuchar fotos en tiempo real desde Firestore
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) setPhotos(JSON.parse(saved));
+    const q = query(collection(db, COLLECTION), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snap) => {
+      const data = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Photo));
+      setPhotos(data);
+      setLoading(false);
+    }, (err) => {
+      console.error(err);
+      setLoading(false);
+    });
+    return () => unsub();
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      if (ev.target?.result) {
-        setPendingPhoto(ev.target.result as string);
-        setCaption("");
-      }
-    };
-    reader.readAsDataURL(file);
+    setPendingFile(file);
+    setPendingPreview(URL.createObjectURL(file));
+    setCaption("");
+    setError(null);
     e.target.value = "";
   };
 
-  const savePhoto = () => {
-    if (!pendingPhoto) return;
-    const photo: Photo = {
-      id: Date.now().toString(),
-      src: pendingPhoto,
-      caption: caption.trim() || "",
-      date: new Date().toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" }),
-    };
-    const updated = [photo, ...photos];
-    setPhotos(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setPendingPhoto(null);
-    setCaption("");
+  const savePhoto = async () => {
+    if (!pendingFile) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const { url, publicId } = await uploadToCloudinary(pendingFile);
+      await addDoc(collection(db, COLLECTION), {
+        src: url,
+        publicId,
+        caption: caption.trim() || "",
+        date: new Date().toLocaleDateString("es-ES", {
+          year: "numeric", month: "long", day: "numeric",
+        }),
+        createdAt: Date.now(),
+      });
+      setPendingFile(null);
+      setPendingPreview(null);
+      setCaption("");
+    } catch (err) {
+      setError("Error al subir la foto. Intenta de nuevo.");
+    } finally {
+      setUploading(false);
+    }
   };
 
-  const deletePhoto = (id: string) => {
-    const updated = photos.filter(p => p.id !== id);
-    setPhotos(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setSelected(null);
+  const deletePhoto = async (photo: Photo) => {
+    try {
+      await deleteDoc(doc(db, COLLECTION, photo.id));
+      setSelected(null);
+    } catch (err) {
+      console.error("Error eliminando foto:", err);
+    }
   };
 
   return (
@@ -70,7 +119,6 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         onClick={onBack}
-        data-testid="button-back-gallery"
         className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -90,16 +138,10 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
           <p className="text-white/40 text-sm">Nuestros momentos especiales</p>
         </motion.div>
 
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileChange}
-        />
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
 
         <AnimatePresence mode="wait">
-          {pendingPhoto ? (
+          {pendingPreview ? (
             <motion.div
               key="pending"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -107,11 +149,8 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
               exit={{ opacity: 0, scale: 0.95 }}
               className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/10 mb-6"
             >
-              <img
-                src={pendingPhoto}
-                alt="Preview"
-                className="w-full rounded-2xl max-h-64 object-cover mb-4"
-              />
+              <img src={pendingPreview} alt="Preview"
+                className="w-full rounded-2xl max-h-64 object-cover mb-4" />
               <input
                 type="text"
                 value={caption}
@@ -119,21 +158,23 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
                 placeholder="Añade una descripción (opcional)..."
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 mb-4"
               />
+              {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
               <div className="flex gap-3">
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setPendingPhoto(null)}
-                  className="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-white/70 font-semibold"
-                >
+                <motion.button whileTap={{ scale: 0.97 }}
+                  onClick={() => { setPendingFile(null); setPendingPreview(null); }}
+                  disabled={uploading}
+                  className="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-white/70 font-semibold disabled:opacity-40">
                   Cancelar
                 </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
+                <motion.button whileTap={{ scale: 0.97 }}
                   onClick={savePhoto}
-                  className="flex-1 py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 rounded-xl text-white font-semibold flex items-center justify-center gap-2"
-                >
-                  <Heart className="w-4 h-4" />
-                  Guardar
+                  disabled={uploading}
+                  className="flex-1 py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 rounded-xl text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-60">
+                  {uploading ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Subiendo...</>
+                  ) : (
+                    <><Heart className="w-4 h-4" /> Guardar</>
+                  )}
                 </motion.button>
               </div>
             </motion.div>
@@ -146,7 +187,6 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => fileRef.current?.click()}
-              data-testid="button-add-photo"
               className="w-full flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-rose-500/20 to-pink-500/20 hover:from-rose-500/30 hover:to-pink-500/30 rounded-2xl border border-rose-300/20 hover:border-rose-300/40 text-white font-bold mb-6 transition-all"
             >
               <Plus className="w-5 h-5" />
@@ -155,7 +195,11 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
           )}
         </AnimatePresence>
 
-        {photos.length === 0 && !pendingPhoto ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 text-rose-300 animate-spin" />
+          </div>
+        ) : photos.length === 0 && !pendingPreview ? (
           <div className="bg-white/3 backdrop-blur-xl rounded-3xl p-12 border border-white/5 text-center">
             <ImageIcon className="w-12 h-12 text-white/20 mx-auto mb-4" />
             <p className="text-white/40">Aún no hay fotos</p>
@@ -173,11 +217,8 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
                 className="w-full break-inside-avoid rounded-2xl overflow-hidden border border-white/10 hover:border-white/30 transition-all group"
               >
                 <div className="relative">
-                  <img
-                    src={photo.src}
-                    alt={photo.caption || "Foto"}
-                    className="w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  <img src={photo.src} alt={photo.caption || "Foto"}
+                    className="w-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               </motion.button>
@@ -189,9 +230,7 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
       <AnimatePresence>
         {selected && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-4"
             onClick={() => setSelected(null)}
           >
@@ -203,16 +242,11 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
               className="bg-white/5 backdrop-blur-2xl rounded-3xl overflow-hidden border border-white/10 max-w-lg w-full"
             >
               <div className="relative">
-                <img
-                  src={selected.src}
-                  alt={selected.caption || "Foto"}
-                  className="w-full max-h-[60vh] object-contain"
-                />
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
+                <img src={selected.src} alt={selected.caption || "Foto"}
+                  className="w-full max-h-[60vh] object-contain" />
+                <motion.button whileTap={{ scale: 0.9 }}
                   onClick={() => setSelected(null)}
-                  className="absolute top-3 right-3 p-2 bg-black/50 rounded-full"
-                >
+                  className="absolute top-3 right-3 p-2 bg-black/50 rounded-full">
                   <X className="w-4 h-4 text-white" />
                 </motion.button>
               </div>
@@ -223,9 +257,8 @@ export default function PhotoGallery({ onBack }: PhotoGalleryProps) {
                 <div className="flex items-center justify-between">
                   <p className="text-white/30 text-sm">{selected.date}</p>
                   <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => deletePhoto(selected.id)}
+                    whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                    onClick={() => deletePhoto(selected)}
                     className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-300 text-sm"
                   >
                     <Trash2 className="w-4 h-4" />

@@ -6,17 +6,22 @@ export function useTypewriter(text: string, initialSpeed: number = 35) {
   const index = useRef(0);
   const speed = useRef(initialSpeed);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const currentText = useRef("");
 
   useEffect(() => {
-    // Si el texto está vacío (cargando), no hacer nada
     if (!text) {
       setDisplay("");
       setDone(false);
       index.current = 0;
+      currentText.current = "";
       return;
     }
 
-    // Reiniciar cuando llega el texto real
+    // Si el texto es el mismo no reiniciar
+    if (text === currentText.current) return;
+    currentText.current = text;
+
+    if (intervalRef.current) clearInterval(intervalRef.current);
     setDisplay("");
     setDone(false);
     index.current = 0;
@@ -35,11 +40,9 @@ export function useTypewriter(text: string, initialSpeed: number = 35) {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [text]); // solo se reinicia cuando cambia el texto
+  }, [text]);
 
-  const speedUp = () => {
-    speed.current = 10;
-  };
+  const speedUp = () => { speed.current = 10; };
 
   const skip = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);

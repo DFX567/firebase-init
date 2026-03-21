@@ -45,7 +45,7 @@ export function useFirestoreContent({
       },
       (error) => {
         // Error de Firestore (permisos, sin internet, etc.) — usar texto por defecto
-        setContent("ERROR: " + error.code + " - " + error.message);
+        setContent(defaultContent);
         setContent(defaultContent);
         setLoading(false);
       }
