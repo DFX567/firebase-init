@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, BookOpen, Sparkles } from "lucide-react";
+import { defaultPoems, getContent, getContentKey } from "@/utils/contentOverrides";
 
 interface PoemOfTheDayProps {
   onBack: () => void;
@@ -94,7 +95,12 @@ el corazón se vuelve un lago.`,
 
 export default function PoemOfTheDay({ onBack }: PoemOfTheDayProps) {
   const dayIndex = new Date().getDay();
-  const poem = poems[dayIndex % poems.length];
+  const defaultPoem = poems[dayIndex % poems.length];
+  const poemText = getContent(
+    getContentKey("memories", "poem", undefined, dayIndex),
+    defaultPoems[dayIndex % defaultPoems.length]?.text ?? defaultPoem.text
+  );
+  const poem = { ...defaultPoem, text: poemText };
 
   const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const today = dayNames[new Date().getDay()];

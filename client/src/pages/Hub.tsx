@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Cake, Calendar, LogOut, Sparkles, Users, Gamepad2, Star } from "lucide-react";
+import { Heart, Cake, Calendar, LogOut, Sparkles, Users, Gamepad2, Star, Flower2, Edit3 } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 import SecretMenu from "@/components/SecretMenu";
 import type { User } from "firebase/auth";
 
 interface HubProps {
-  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "games" | "memories") => void;
+  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "floresamarillas" | "games" | "memories" | "admin") => void;
   onLogout: () => void;
   user: User;
+  isAdmin: boolean;
 }
 
-export default function Hub({ onSelect, onLogout, user }: HubProps) {
+export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
   const [secretMode, setSecretMode] = useState(false);
 
   const mainSections = [
@@ -67,6 +68,19 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
       description: "20 de Septiembre",
       delay: 0.5,
     },
+    {
+      id: "floresamarillas" as const,
+      title: "Flores Amarillas",
+      icon: Flower2,
+      gradient: "from-yellow-400 via-amber-400 to-yellow-500",
+      bgCard: "from-yellow-400/10 to-amber-400/10",
+      border: "border-yellow-300/20",
+      hoverBorder: "hover:border-yellow-300/50",
+      glow: "bg-yellow-400/20",
+      emoji: "🌻",
+      description: "21 de Marzo",
+      delay: 0.6,
+    },
   ];
 
   const extraHubs = [
@@ -81,7 +95,7 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
       hoverBorder: "hover:border-cyan-300/50",
       glow: "bg-cyan-500/20",
       icon: Gamepad2,
-      delay: 0.6,
+      delay: 0.75,
     },
     {
       id: "memories" as const,
@@ -94,7 +108,7 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
       hoverBorder: "hover:border-teal-300/50",
       glow: "bg-teal-500/20",
       icon: Star,
-      delay: 0.7,
+      delay: 0.85,
     },
   ];
 
@@ -179,7 +193,7 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-5">
           {mainSections.map((section) => {
             const Icon = section.icon;
             return (
@@ -295,6 +309,22 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
           transition={{ delay: 0.9 }}
           className="mt-10 md:mt-14 text-center"
         >
+          {isAdmin && (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.0 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onSelect("admin")}
+              data-testid="button-admin-editor"
+              className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-indigo-300/30 text-white/40 hover:text-indigo-300 transition-all text-sm"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              Editar contenido
+            </motion.button>
+          )}
+
           <p className="text-white/20 text-sm flex items-center justify-center gap-2">
             Hecho con
             <motion.span

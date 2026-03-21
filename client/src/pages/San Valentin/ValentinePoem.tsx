@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { sanValentinContent } from "@/data/events";
+import { getContent, getContentKey } from "@/utils/contentOverrides";
 import { ArrowLeft, FastForward, SkipForward, Heart, Sparkles, BookOpen } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 
@@ -10,7 +11,10 @@ interface ValentinePoemProps {
 }
 
 export default function ValentinePoem({ year, onBack }: ValentinePoemProps) {
-  const content = sanValentinContent.poem.text(year);
+  const content = getContent(
+    getContentKey("sanvalentin", "poem", year),
+    sanValentinContent.poem.text(year)
+  );
   const { display, speedUp, skip, done } = useTypewriter(content, 60);
 
   return (
