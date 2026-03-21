@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { db } from "@/lib/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { getContentKey, getDefaultContent } from "@/utils/contentOverrides";
 
 interface UseFirestoreContentOptions {
@@ -10,49 +10,32 @@ interface UseFirestoreContentOptions {
   day?: number;
 }
 
-/**
- * Hook que escucha el contenido en tiempo real desde Firestore.
- * Si no existe en Firestore, usa el contenido por defecto de events.ts.
- */
 export function useFirestoreContent({
   section,
   type,
   year = new Date().getFullYear(),
   day = new Date().getDay(),
 }: UseFirestoreContentOptions): { content: string; loading: boolean } {
-  const key = getContentKey(section, type, year, day);
-  const defaultContent = getDefaultContent(section, type, year, day);
-
   const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    setContent("");
+    const key = getContentKey(section, type, year, day);
+    const def = getDefaultContent(section, type, year, day);
 
-    const ref = doc(db, "siteContent", key);
+    // Primero mostrar el texto por defecto inmediatamente
+    setContent(def);
+    setLoading(false);
 
-    const unsubscribe = onSnapshot(
-      ref,
-      (snap) => {
-        if (snap.exists() && snap.data()?.value) {
-          setContent(snap.data().value as string);
-        } else {
-          // No existe en Firestore — usar el texto por defecto
-          setContent(defaultContent);
-        }
-        setLoading(false);
-      },
-      (error) => {
-        // Error de Firestore (permisos, sin internet, etc.) — usar texto por defecto
-        setContent(defaultContent);
-        setContent(defaultContent);
-        setLoading(false);
+    // Luego verificar si hay algo en Firestore (una sola vez, sin onSnapshot)
+    getDoc(doc(db, "siteContent", key)).then((snap) => {
+      if (snap.exists() && snap.data()?.value) {
+        setContent(snap.data().value as string);
       }
-    );
-
-    return () => unsubscribe();
-  }, [key, defaultContent]);
+    }).catch(() => {
+      // Si falla Firestore, ya tenemos el texto por defecto
+    });
+  }, [section, type, year, day]);
 
   return { content, loading };
 }
