@@ -1,36 +1,11 @@
 import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
+import { getContent, getContentKey, floresDefaultLetter } from "@/utils/contentOverrides";
 import { ArrowLeft, FastForward, SkipForward } from "lucide-react";
 
 interface FloresLetterProps {
   onBack: () => void;
 }
-
-const letterText = `Hoy, 21 de marzo, el mundo se viste de amarillo
-y yo solo puedo pensar en ti.
-
-Las flores amarillas no son casualidad.
-Son la forma en que el universo dice
-"alguien te quiere, alguien te piensa,
-alguien te lleva en el corazón."
-
-Y ese alguien soy yo.
-
-Eres la luz que llena mi espacio,
-el color más brillante en mis días grises.
-Como el girasol que siempre busca el sol,
-yo siempre te busco a ti.
-
-Hoy y cada 21 de marzo,
-quiero que sepas que te amo.
-Que tu sonrisa es el sol que me guía
-y tu presencia, el jardín más bello
-que he tenido el privilegio de conocer.
-
-Feliz Día de las Flores Amarillas,
-mi girasol favorito.
-
-Con todo mi amor ❤️`;
 
 function SpinningSunflower({ size = 60, style }: { size?: number; style?: React.CSSProperties }) {
   return (
@@ -77,6 +52,7 @@ function SpinningSunflower({ size = 60, style }: { size?: number; style?: React.
 }
 
 export default function FloresLetter({ onBack }: FloresLetterProps) {
+  const letterText = getContent(getContentKey("flores", "letter"), floresDefaultLetter);
   const { display, speedUp, skip, done } = useTypewriter(letterText);
 
   return (

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { anniversaryContent } from "@/data/events";
+import { getContent, getContentKey } from "@/utils/contentOverrides";
 import { ArrowLeft, FastForward, SkipForward, Heart, Sparkles } from "lucide-react";
 import StarField from "@/components/StarField";
 import Planet3D from "@/components/animations/Planet3D";
@@ -11,7 +12,10 @@ interface LoveLetterProps {
 }
 
 export default function LoveLetter({ year, onBack }: LoveLetterProps) {
-  const content = anniversaryContent.letter.text(year);
+  const content = getContent(
+    getContentKey("anniversary", "letter", year),
+    anniversaryContent.letter.text(year)
+  );
   const { display, speedUp, skip, done } = useTypewriter(content);
 
   return (

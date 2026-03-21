@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { cumpleContent } from "@/data/events";
+import { getContent, getContentKey } from "@/utils/contentOverrides";
 import { ArrowLeft, FastForward, SkipForward, Cake, Sparkles, PartyPopper } from "lucide-react";
 import ConfettiRain from "@/components/animations/ConfettiRain";
 import Planet3D from "@/components/animations/Planet3D";
@@ -11,7 +12,10 @@ interface BirthdayLetterProps {
 }
 
 export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
-  const content = cumpleContent.letter.text(year);
+  const content = getContent(
+    getContentKey("cumple", "letter", year),
+    cumpleContent.letter.text(year)
+  );
   const { display, speedUp, skip, done } = useTypewriter(content);
 
   return (

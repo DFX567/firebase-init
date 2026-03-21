@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Cake, Calendar, LogOut, Sparkles, Users, Gamepad2, Star, Flower2 } from "lucide-react";
+import { Heart, Cake, Calendar, LogOut, Sparkles, Users, Gamepad2, Star, Flower2, Edit3 } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 import SecretMenu from "@/components/SecretMenu";
 import type { User } from "firebase/auth";
 
 interface HubProps {
-  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "floresamarillas" | "games" | "memories") => void;
+  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "floresamarillas" | "games" | "memories" | "admin") => void;
   onLogout: () => void;
   user: User;
+  isAdmin: boolean;
 }
 
-export default function Hub({ onSelect, onLogout, user }: HubProps) {
+export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
   const [secretMode, setSecretMode] = useState(false);
 
   const mainSections = [
@@ -308,6 +309,22 @@ export default function Hub({ onSelect, onLogout, user }: HubProps) {
           transition={{ delay: 0.9 }}
           className="mt-10 md:mt-14 text-center"
         >
+          {isAdmin && (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.0 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onSelect("admin")}
+              data-testid="button-admin-editor"
+              className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-indigo-300/30 text-white/40 hover:text-indigo-300 transition-all text-sm"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              Editar contenido
+            </motion.button>
+          )}
+
           <p className="text-white/20 text-sm flex items-center justify-center gap-2">
             Hecho con
             <motion.span

@@ -17,13 +17,16 @@ import AmorAmistadRouter from "@/pages/Amor y Amistad/AmorAmistadRouter";
 import GamesHub from "@/pages/GamesHub/GamesHub";
 import MemoriesHub from "@/pages/MemoriesHub/MemoriesHub";
 import FloresAmarillaRouter from "@/pages/FloresAmarillas/FloresAmarillaRouter";
+import AdminEditor from "@/pages/AdminEditor/AdminEditor";
 
 const ALLOWED_EMAILS = [
   "dfx1mas87@gmail.com",
   "lfbecerraaponte@gmail.com",
 ];
 
-type Section = "hub" | "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "floresamarillas" | "games" | "memories";
+const ADMIN_EMAIL = "dfx1mas87@gmail.com";
+
+type Section = "hub" | "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "floresamarillas" | "games" | "memories" | "admin";
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -92,6 +95,7 @@ export default function App() {
   if (section === "floresamarillas") return <FloresAmarillaRouter onBack={() => setSection("hub")} />;
   if (section === "games") return <GamesHub onBack={() => setSection("hub")} />;
   if (section === "memories") return <MemoriesHub onBack={() => setSection("hub")} />;
+  if (section === "admin") return <AdminEditor onBack={() => setSection("hub")} />;
 
-  return <Hub onSelect={setSection} onLogout={handleLogout} user={user} />;
+  return <Hub onSelect={setSection} onLogout={handleLogout} user={user} isAdmin={user.email === ADMIN_EMAIL} />;
 }
