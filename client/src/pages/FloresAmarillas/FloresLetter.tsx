@@ -10,12 +10,6 @@ interface FloresLetterProps {
 function SpinningSunflower({ size = 60, style }: { size?: number; style?: React.CSSProperties }) {
   return (
     <div style={{ position: "absolute", width: size, height: size, ...style }}>
-      <style>{`
-        @keyframes spin-flower {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
       <svg
         width={size}
         height={size}

@@ -25,31 +25,6 @@ export default function SunflowerLandscape() {
 
   return (
     <div className="w-full h-full relative overflow-hidden">
-      <style>{`
-        @keyframes sway {
-          0%, 100% { transform: rotate(-6deg); transform-origin: bottom center; }
-          50% { transform: rotate(6deg); transform-origin: bottom center; }
-        }
-        @keyframes sway-alt {
-          0%, 100% { transform: rotate(5deg); transform-origin: bottom center; }
-          50% { transform: rotate(-5deg); transform-origin: bottom center; }
-        }
-        @keyframes float-cloud {
-          0% { transform: translateX(-120px); opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { transform: translateX(120vw); opacity: 0; }
-        }
-        @keyframes sun-pulse {
-          0%, 100% { box-shadow: 0 0 40px 20px rgba(253,224,71,0.4), 0 0 80px 40px rgba(251,191,36,0.2); }
-          50% { box-shadow: 0 0 60px 30px rgba(253,224,71,0.6), 0 0 120px 60px rgba(251,191,36,0.3); }
-        }
-        @keyframes spin-petal {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
-
       <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200" />
 
       <div

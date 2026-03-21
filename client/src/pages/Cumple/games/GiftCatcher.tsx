@@ -237,13 +237,6 @@ export default function GiftCatcher({ onBack }: GiftCatcherProps) {
         </AnimatePresence>
       </div>
 
-      <style>{`
-        @keyframes giftFall {
-          0% { top: -50px; opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: calc(100% - 60px); opacity: 0; }
-        }
-      `}</style>
     </div>
   );
 }
