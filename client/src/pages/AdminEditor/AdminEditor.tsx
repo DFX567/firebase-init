@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Save, Check, Edit3, ChevronRight } from "lucide-react";
+import { ArrowLeft, Save, Check, Edit3, ChevronRight, Loader2 } from "lucide-react";
 import {
   getContentKey,
   getContent,
@@ -63,6 +63,7 @@ const SECTIONS = [
 const DAY_NAMES = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
 type Step = "section" | "editor";
+type SaveState = "idle" | "saving" | "saved" | "error";
 
 export default function AdminEditor({ onBack }: AdminEditorProps) {
   const [step, setStep] = useState<Step>("section");
@@ -71,10 +72,13 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
   const [selectedYear, setSelectedYear] = useState(2026);
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
   const [editText, setEditText] = useState("");
-  const [saved, setSaved] = useState(false);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [loadingContent, setLoadingContent] = useState(false);
 
+  // Cargar contenido desde Firestore cuando cambia la selección
   useEffect(() => {
     if (step !== "editor") return;
+
     const key = getContentKey(
       selectedSection.id,
       selectedType,
@@ -87,20 +91,35 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
       selectedYear,
       selectedDay
     );
-    setEditText(getContent(key, def));
-    setSaved(false);
+
+    setLoadingContent(true);
+    setSaveState("idle");
+
+    getContent(key, def).then((value) => {
+      setEditText(value);
+      setLoadingContent(false);
+    });
   }, [step, selectedSection, selectedType, selectedYear, selectedDay]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (saveState === "saving") return;
+    setSaveState("saving");
+
     const key = getContentKey(
       selectedSection.id,
       selectedType,
       selectedYear,
       selectedDay
     );
-    setContent(key, editText);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+
+    try {
+      await setContent(key, editText);
+      setSaveState("saved");
+      setTimeout(() => setSaveState("idle"), 2500);
+    } catch {
+      setSaveState("error");
+      setTimeout(() => setSaveState("idle"), 3000);
+    }
   };
 
   const handleOpenEditor = (section: typeof SECTIONS[0]) => {
@@ -135,7 +154,7 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
             Panel de Administración
           </h1>
-          <p className="text-white/40 text-sm">Editar cartas y poemas del sitio</p>
+          <p className="text-white/40 text-sm">Los cambios se sincronizan en todos los dispositivos</p>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -251,41 +270,48 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
                   </p>
                   <span className="text-white/30 text-xs">{editText.length} chars</span>
                 </div>
-                <textarea
-                  value={editText}
-                  onChange={(e) => { setEditText(e.target.value); setSaved(false); }}
-                  rows={16}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white/90 placeholder:text-white/20 focus:outline-none focus:border-indigo-400/50 resize-none font-mono text-sm leading-relaxed"
-                  placeholder="Escribe el contenido aquí..."
-                />
+
+                {loadingContent ? (
+                  <div className="w-full h-64 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-indigo-300 animate-spin" />
+                  </div>
+                ) : (
+                  <textarea
+                    value={editText}
+                    onChange={(e) => { setEditText(e.target.value); setSaveState("idle"); }}
+                    rows={16}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white/90 placeholder:text-white/20 focus:outline-none focus:border-indigo-400/50 resize-none font-mono text-sm leading-relaxed"
+                    placeholder="Escribe el contenido aquí..."
+                  />
+                )}
               </div>
 
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSave}
-                disabled={!editText.trim()}
+                disabled={!editText.trim() || saveState === "saving" || loadingContent}
                 className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-base transition-all ${
-                  saved
+                  saveState === "saved"
                     ? "bg-green-500 text-white"
+                    : saveState === "error"
+                    ? "bg-red-500 text-white"
                     : "bg-indigo-500 hover:bg-indigo-600 text-white disabled:opacity-40 disabled:cursor-not-allowed"
                 }`}
               >
-                {saved ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Guardado correctamente
-                  </>
+                {saveState === "saving" ? (
+                  <><Loader2 className="w-5 h-5 animate-spin" /> Guardando...</>
+                ) : saveState === "saved" ? (
+                  <><Check className="w-5 h-5" /> Guardado en todos los dispositivos</>
+                ) : saveState === "error" ? (
+                  <>❌ Error al guardar, intenta de nuevo</>
                 ) : (
-                  <>
-                    <Save className="w-5 h-5" />
-                    Guardar cambios
-                  </>
+                  <><Save className="w-5 h-5" /> Guardar cambios</>
                 )}
               </motion.button>
 
               <p className="text-white/25 text-xs text-center">
-                Los cambios se guardan en este dispositivo y se aplican al instante en toda la app.
+                Los cambios se guardan en Firebase y se sincronizan en todos los dispositivos al instante.
               </p>
             </motion.div>
           )}

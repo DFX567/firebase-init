@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { cumpleContent } from "@/data/events";
-import { getContent, getContentKey } from "@/utils/contentOverrides";
+import { useFirestoreContent } from "@/hooks/useFirestoreContent";
 import { ArrowLeft, FastForward, SkipForward, Cake, Sparkles, PartyPopper } from "lucide-react";
 import ConfettiRain from "@/components/animations/ConfettiRain";
 import Planet3D from "@/components/animations/Planet3D";
@@ -12,11 +12,12 @@ interface BirthdayLetterProps {
 }
 
 export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
-  const content = getContent(
-    getContentKey("cumple", "letter", year),
-    cumpleContent.letter.text(year)
-  );
-  const { display, speedUp, skip, done } = useTypewriter(content);
+  const { content, loading } = useFirestoreContent({
+    section: "cumple",
+    type: "letter",
+    year,
+  });
+  const { display, speedUp, skip, done } = useTypewriter(loading ? "" : content);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
@@ -29,8 +30,8 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/25 rounded-full blur-3xl" />
       </div>
 
-      <Planet3D 
-        size={380} 
+      <Planet3D
+        size={380}
         position={{ x: "10%", y: "25%" }}
         colors={["#c084fc", "#a78bfa", "#8b5cf6"]}
         rotationSpeed={90}
@@ -41,19 +42,12 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
         <motion.div
           key={i}
           className="absolute text-5xl pointer-events-none"
-          initial={{ 
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-            y: (typeof window !== 'undefined' ? window.innerHeight : 1000) + 100
+          initial={{
+            x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000),
+            y: (typeof window !== "undefined" ? window.innerHeight : 1000) + 100,
           }}
-          animate={{
-            y: -150,
-            rotate: [0, 360]
-          }}
-          transition={{
-            duration: Math.random() * 10 + 15,
-            repeat: Infinity,
-            delay: Math.random() * 5
-          }}
+          animate={{ y: -150, rotate: [0, 360] }}
+          transition={{ duration: Math.random() * 10 + 15, repeat: Infinity, delay: Math.random() * 5 }}
         >
           🎈
         </motion.div>
@@ -129,17 +123,27 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
               </motion.div>
             </div>
 
-            <div className="relative">
-              <pre className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans text-purple-50/95">
-                {display}
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                  className="inline-block ml-1"
-                >
-                  |
-                </motion.span>
-              </pre>
+            <div className="relative min-h-[80px]">
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 border-purple-300/30 border-t-purple-300 rounded-full"
+                  />
+                </div>
+              ) : (
+                <pre className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans text-purple-50/95">
+                  {display}
+                  <motion.span
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="inline-block ml-1"
+                  >
+                    |
+                  </motion.span>
+                </pre>
+              )}
             </div>
 
             <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-purple-300/20">
@@ -150,7 +154,7 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
           </div>
         </motion.div>
 
-        {!done && (
+        {!loading && !done && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -166,7 +170,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
               <FastForward className="w-4 h-4 md:w-5 md:h-5" />
               <span className="font-semibold text-sm md:text-base">Acelerar x2</span>
             </motion.button>
-
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
@@ -179,15 +182,13 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
           </motion.div>
         )}
 
-        {done && (
+        {!loading && done && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center mt-8"
           >
-            <p className="text-purple-200/70 text-sm md:text-base">
-              🎊 Mensaje completo 🎊
-            </p>
+            <p className="text-purple-200/70 text-sm md:text-base">🎊 Mensaje completo 🎊</p>
           </motion.div>
         )}
       </div>

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { sanValentinContent } from "@/data/events";
-import { getContent, getContentKey } from "@/utils/contentOverrides";
+import { useFirestoreContent } from "@/hooks/useFirestoreContent";
 import { ArrowLeft, FastForward, SkipForward, Heart, Sparkles } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 
@@ -11,11 +11,12 @@ interface ValentineLetterProps {
 }
 
 export default function ValentineLetter({ year, onBack }: ValentineLetterProps) {
-  const content = getContent(
-    getContentKey("sanvalentin", "letter", year),
-    sanValentinContent.letter.text(year)
-  );
-  const { display, speedUp, skip, done } = useTypewriter(content);
+  const { content, loading } = useFirestoreContent({
+    section: "sanvalentin",
+    type: "letter",
+    year,
+  });
+  const { display, speedUp, skip, done } = useTypewriter(loading ? "" : content);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
@@ -70,7 +71,7 @@ export default function ValentineLetter({ year, onBack }: ValentineLetterProps) 
           <h2 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-rose-200 via-pink-100 to-rose-200 mb-3 drop-shadow-lg">
             {sanValentinContent.letter.title}
           </h2>
-          
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -96,21 +97,17 @@ export default function ValentineLetter({ year, onBack }: ValentineLetterProps) 
           className="relative mb-8"
         >
           <div className="absolute -inset-4 bg-gradient-to-r from-rose-500/25 via-pink-500/25 to-red-500/25 rounded-3xl blur-2xl animate-pulse" />
-          
+
           <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-2xl rounded-2xl md:rounded-3xl p-6 md:p-10 border border-rose-300/30 shadow-2xl overflow-hidden">
             <div className="absolute inset-0 opacity-5 rounded-2xl md:rounded-3xl" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)'
+              backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)"
             }} />
 
             <div className="absolute top-4 left-4 text-4xl md:text-5xl opacity-10">
-              <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 3, repeat: Infinity }}>
-                💕
-              </motion.span>
+              <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 3, repeat: Infinity }}>💕</motion.span>
             </div>
             <div className="absolute bottom-4 right-4 text-4xl md:text-5xl opacity-10">
-              <motion.span animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 3, repeat: Infinity, delay: 1 }}>
-                💗
-              </motion.span>
+              <motion.span animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 3, repeat: Infinity, delay: 1 }}>💗</motion.span>
             </div>
 
             <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-gradient-to-br from-rose-500 to-pink-600 backdrop-blur-sm rounded-full p-3 md:p-4 border-2 border-rose-300/50 shadow-lg">
@@ -124,25 +121,32 @@ export default function ValentineLetter({ year, onBack }: ValentineLetterProps) 
             </div>
 
             <div className="absolute -bottom-3 -left-3 md:-bottom-4 md:-left-4 bg-gradient-to-br from-pink-500 to-rose-600 backdrop-blur-sm rounded-full p-2 md:p-3 border-2 border-pink-300/50 shadow-lg">
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
+              <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
                 <Heart className="w-4 h-4 md:w-5 md:h-5 text-white fill-white" />
               </motion.div>
             </div>
 
-            <div className="relative pt-4">
-              <pre className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans text-rose-50/95">
-                {display}
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                  className="inline-block ml-1 text-rose-300"
-                >
-                  |
-                </motion.span>
-              </pre>
+            <div className="relative pt-4 min-h-[80px]">
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 border-rose-300/30 border-t-rose-300 rounded-full"
+                  />
+                </div>
+              ) : (
+                <pre className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans text-rose-50/95">
+                  {display}
+                  <motion.span
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="inline-block ml-1 text-rose-300"
+                  >
+                    |
+                  </motion.span>
+                </pre>
+              )}
             </div>
 
             <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-rose-300/20">
@@ -153,7 +157,7 @@ export default function ValentineLetter({ year, onBack }: ValentineLetterProps) 
           </div>
         </motion.div>
 
-        {!done && (
+        {!loading && !done && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -170,7 +174,6 @@ export default function ValentineLetter({ year, onBack }: ValentineLetterProps) 
               <FastForward className="w-4 h-4 md:w-5 md:h-5" />
               <span className="font-semibold text-sm md:text-base">Acelerar x2</span>
             </motion.button>
-            
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
@@ -184,7 +187,7 @@ export default function ValentineLetter({ year, onBack }: ValentineLetterProps) 
           </motion.div>
         )}
 
-        {done && (
+        {!loading && done && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

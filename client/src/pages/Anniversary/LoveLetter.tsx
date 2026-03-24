@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { anniversaryContent } from "@/data/events";
-import { getContent, getContentKey } from "@/utils/contentOverrides";
+import { useFirestoreContent } from "@/hooks/useFirestoreContent";
 import { ArrowLeft, FastForward, SkipForward, Heart, Sparkles } from "lucide-react";
 import StarField from "@/components/StarField";
 import Planet3D from "@/components/animations/Planet3D";
@@ -12,11 +12,13 @@ interface LoveLetterProps {
 }
 
 export default function LoveLetter({ year, onBack }: LoveLetterProps) {
-  const content = getContent(
-    getContentKey("anniversary", "letter", year),
-    anniversaryContent.letter.text(year)
-  );
-  const { display, speedUp, skip, done } = useTypewriter(content);
+  const { content, loading } = useFirestoreContent({
+    section: "anniversary",
+    type: "letter",
+    year,
+  });
+
+  const { display, speedUp, skip, done } = useTypewriter(loading ? "" : content);
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
@@ -24,8 +26,8 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
         <StarField count={80} />
       </div>
 
-      <Planet3D 
-        size={350} 
+      <Planet3D
+        size={350}
         position={{ x: "90%", y: "20%" }}
         colors={["#fecdd3", "#fb7185", "#e11d48"]}
         rotationSpeed={100}
@@ -37,18 +39,15 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
           <motion.div
             key={i}
             className="absolute text-rose-300/10 text-4xl"
-            initial={{ 
-              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-              y: (typeof window !== 'undefined' ? window.innerHeight : 1000) + 50
+            initial={{
+              x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000),
+              y: (typeof window !== "undefined" ? window.innerHeight : 1000) + 50,
             }}
-            animate={{
-              y: -50,
-              rotate: [0, 360]
-            }}
+            animate={{ y: -50, rotate: [0, 360] }}
             transition={{
               duration: Math.random() * 15 + 20,
               repeat: Infinity,
-              delay: Math.random() * 10
+              delay: Math.random() * 10,
             }}
           >
             💕
@@ -88,7 +87,7 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
           <h2 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-rose-200 via-pink-100 to-rose-200 mb-3">
             {anniversaryContent.letter.title}
           </h2>
-          
+
           <div className="flex items-center justify-center gap-3 mt-4">
             <div className="h-px w-16 md:w-24 bg-gradient-to-r from-transparent via-rose-300/50 to-transparent" />
             <Sparkles className="w-5 h-5 text-rose-300" />
@@ -103,11 +102,15 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
           className="relative mb-8"
         >
           <div className="absolute -inset-4 bg-gradient-to-r from-rose-500/20 via-pink-500/20 to-rose-500/20 rounded-3xl blur-2xl" />
-          
+
           <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-2xl rounded-2xl md:rounded-3xl p-6 md:p-10 border border-rose-300/30 shadow-2xl">
-            <div className="absolute inset-0 opacity-5 rounded-2xl md:rounded-3xl" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)'
-            }} />
+            <div
+              className="absolute inset-0 opacity-5 rounded-2xl md:rounded-3xl"
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)",
+              }}
+            />
 
             <div className="absolute -top-4 -right-4 md:-top-6 md:-right-6 bg-rose-500/80 backdrop-blur-sm rounded-full p-3 md:p-4 border-2 border-rose-300/50 shadow-lg">
               <motion.div
@@ -118,17 +121,27 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
               </motion.div>
             </div>
 
-            <div className="relative">
-              <pre className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans text-rose-50/95">
-                {display}
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.8, repeat: Infinity }}
-                  className="inline-block ml-1"
-                >
-                  |
-                </motion.span>
-              </pre>
+            <div className="relative min-h-[100px]">
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-8 h-8 border-2 border-rose-300/30 border-t-rose-300 rounded-full"
+                  />
+                </div>
+              ) : (
+                <pre className="whitespace-pre-wrap text-base md:text-lg leading-relaxed md:leading-loose font-sans text-rose-50/95">
+                  {display}
+                  <motion.span
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="inline-block ml-1"
+                  >
+                    |
+                  </motion.span>
+                </pre>
+              )}
             </div>
 
             <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-rose-300/20">
@@ -139,7 +152,7 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
           </div>
         </motion.div>
 
-        {!done && (
+        {!loading && !done && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -155,7 +168,7 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
               <FastForward className="w-4 h-4 md:w-5 md:h-5" />
               <span className="font-semibold text-sm md:text-base">Acelerar x2</span>
             </motion.button>
-            
+
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
@@ -168,15 +181,13 @@ export default function LoveLetter({ year, onBack }: LoveLetterProps) {
           </motion.div>
         )}
 
-        {done && (
+        {!loading && done && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center mt-8"
           >
-            <p className="text-rose-200/70 text-sm md:text-base">
-              ✨ Mensaje completo ✨
-            </p>
+            <p className="text-rose-200/70 text-sm md:text-base">✨ Mensaje completo ✨</p>
           </motion.div>
         )}
       </div>
