@@ -180,6 +180,7 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
     hasYears: true,
     yearStart: 2025,
     yearEnd: 2030,
+    position: "custom" as "main" | "custom",
   });
   const [editingCustomId, setEditingCustomId] = useState<string | null>(null);
   const [createSaveState, setCreateSaveState] = useState<SaveState>("idle");
@@ -322,13 +323,14 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
       hasYears: createForm.hasYears,
       yearStart: createForm.yearStart,
       yearEnd: createForm.yearEnd,
+      position: createForm.position,
       createdAt: editingCustomId ? (customSections.find((s) => s.id === id)?.createdAt ?? Date.now()) : Date.now(),
     };
     saveCustomSection(section);
     refreshCustom();
     setCreateSaveState("saved");
     setEditingCustomId(null);
-    setCreateForm({ id: "", title: "", emoji: "❤️", dateLabel: "", cardGradient: GRADIENT_PRESETS[0].value, mainBg: BACKGROUND_PRESETS[0].value, contentBg: BACKGROUND_PRESETS[1].value, logoType: "emoji", logoValue: "❤️", contentTypes: ["letter"], hasYears: true, yearStart: 2025, yearEnd: 2030 });
+    setCreateForm({ id: "", title: "", emoji: "❤️", dateLabel: "", cardGradient: GRADIENT_PRESETS[0].value, mainBg: BACKGROUND_PRESETS[0].value, contentBg: BACKGROUND_PRESETS[1].value, logoType: "emoji", logoValue: "❤️", contentTypes: ["letter"], hasYears: true, yearStart: 2025, yearEnd: 2030, position: "custom" });
     setTimeout(() => { setCreateSaveState("idle"); setTab("manage"); }, 1500);
   };
 
@@ -336,7 +338,7 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
     const s = getCustomSection(id);
     if (!s) return;
     setEditingCustomId(id);
-    setCreateForm({ id: s.id, title: s.title, emoji: s.emoji, dateLabel: s.dateLabel, cardGradient: s.cardGradient, mainBg: s.mainBg, contentBg: s.contentBg, logoType: s.logoType, logoValue: s.logoValue, contentTypes: s.contentTypes, hasYears: s.hasYears, yearStart: s.yearStart, yearEnd: s.yearEnd });
+    setCreateForm({ id: s.id, title: s.title, emoji: s.emoji, dateLabel: s.dateLabel, cardGradient: s.cardGradient, mainBg: s.mainBg, contentBg: s.contentBg, logoType: s.logoType, logoValue: s.logoValue, contentTypes: s.contentTypes, hasYears: s.hasYears, yearStart: s.yearStart, yearEnd: s.yearEnd, position: s.position ?? "custom" });
     setTab("create");
   };
 
@@ -548,7 +550,7 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
               <div className="flex items-center justify-between">
                 <p className="text-white font-bold text-lg">{editingCustomId ? "Editar sección" : "Nueva sección"}</p>
                 {editingCustomId && (
-                  <button onClick={() => { setEditingCustomId(null); setCreateForm({ id: "", title: "", emoji: "❤️", dateLabel: "", cardGradient: GRADIENT_PRESETS[0].value, mainBg: BACKGROUND_PRESETS[0].value, contentBg: BACKGROUND_PRESETS[1].value, logoType: "emoji", logoValue: "❤️", contentTypes: ["letter"], hasYears: true, yearStart: 2025, yearEnd: 2030 }); }}
+                  <button onClick={() => { setEditingCustomId(null); setCreateForm({ id: "", title: "", emoji: "❤️", dateLabel: "", cardGradient: GRADIENT_PRESETS[0].value, mainBg: BACKGROUND_PRESETS[0].value, contentBg: BACKGROUND_PRESETS[1].value, logoType: "emoji", logoValue: "❤️", contentTypes: ["letter"], hasYears: true, yearStart: 2025, yearEnd: 2030, position: "custom" }); }}
                     className="text-white/40 hover:text-white/70 text-xs flex items-center gap-1">
                     <X className="w-3 h-3" /> Cancelar edición
                   </button>
@@ -581,6 +583,25 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
               <BgPicker label="Fondo de cartas / subsecciones" value={createForm.contentBg} onChange={(v) => setCreateForm((f) => ({ ...f, contentBg: v }))} />
               <LogoPicker logoType={createForm.logoType} logoValue={createForm.logoValue}
                 onChange={(type, val) => setCreateForm((f) => ({ ...f, logoType: type, logoValue: val }))} />
+
+              <div>
+                <p className="text-white/50 text-xs uppercase tracking-wider mb-2">Posición en el Hub</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {([
+                    { value: "main", label: "Secciones principales", desc: "Junto a San Valentín, Aniversario..." },
+                    { value: "custom", label: "Secciones personalizadas", desc: "En su propia área debajo" },
+                  ] as const).map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setCreateForm((f) => ({ ...f, position: opt.value }))}
+                      className={`text-left px-4 py-3 rounded-xl border transition-all ${createForm.position === opt.value ? "bg-indigo-500/20 border-indigo-400/50 text-white" : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10"}`}
+                    >
+                      <p className="font-semibold text-sm">{opt.label}</p>
+                      <p className="text-xs opacity-60 mt-0.5">{opt.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <div>
                 <p className="text-white/50 text-xs uppercase tracking-wider mb-3">Tipos de contenido</p>

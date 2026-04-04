@@ -12,6 +12,7 @@ export interface CustomSectionConfig {
   hasYears: boolean;
   yearStart: number;
   yearEnd: number;
+  position: "main" | "custom";
   createdAt: number;
 }
 

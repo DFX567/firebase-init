@@ -13,9 +13,60 @@ interface HubProps {
   isAdmin: boolean;
 }
 
+function CustomSectionCard({ cs, index, delay, onSelect }: {
+  cs: ReturnType<typeof getCustomSections>[0];
+  index: number;
+  delay: number;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={() => onSelect(cs.id)}
+      data-testid={`button-section-${cs.id}`}
+      className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/25 transition-all duration-500 shadow-xl"
+    >
+      <div
+        className="absolute -inset-2 rounded-3xl blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 -z-10"
+        style={{ background: cs.cardGradient }}
+      />
+      <div className="relative p-5 md:p-7 flex flex-col items-center gap-3">
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], rotate: [0, 4, -4, 0] }}
+          transition={{ duration: 3.5 + index * 0.5, repeat: Infinity }}
+          className="text-3xl md:text-4xl"
+        >
+          {cs.logoType === "image" && cs.logoValue ? (
+            <img src={cs.logoValue} alt={cs.title} className="w-10 h-10 rounded-full object-cover" />
+          ) : (cs.logoValue || cs.emoji)}
+        </motion.div>
+        <div className="p-2 md:p-2.5 rounded-xl shadow-lg" style={{ background: cs.cardGradient }}>
+          <Plus className="w-4 h-4 text-white" />
+        </div>
+        <div className="text-center">
+          <h3 className="text-sm md:text-base font-bold text-white mb-0.5 leading-tight">{cs.title}</h3>
+          <p className="text-[10px] md:text-xs text-white/40 group-hover:text-white/60 transition-colors">{cs.dateLabel}</p>
+        </div>
+      </div>
+      <motion.div
+        initial={{ x: "-100%" }}
+        whileHover={{ x: "100%" }}
+        transition={{ duration: 0.7 }}
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent"
+      />
+    </motion.button>
+  );
+}
+
 export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
   const [secretMode, setSecretMode] = useState(false);
-  const customSections = getCustomSections();
+  const allCustomSections = getCustomSections();
+  const customMain = allCustomSections.filter((s) => s.position === "main");
+  const customBottom = allCustomSections.filter((s) => s.position !== "main");
 
   const mainSections = [
     {
@@ -215,7 +266,6 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
                 className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${section.bgCard} backdrop-blur-xl border ${section.border} ${section.hoverBorder} transition-all duration-500 shadow-xl`}
               >
                 <div className={`absolute -inset-2 ${section.glow} rounded-3xl blur-xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 -z-10`} />
-
                 <div className="relative p-5 md:p-7 flex flex-col items-center gap-3">
                   <motion.div
                     animate={{ scale: [1, 1.1, 1], rotate: [0, 4, -4, 0] }}
@@ -226,24 +276,17 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
                       <img src={override.logoValue} alt="" className="w-10 h-10 rounded-full object-cover" />
                     ) : displayEmoji}
                   </motion.div>
-
                   <div
                     className={`p-2 md:p-2.5 rounded-xl shadow-lg${!cardGrad ? ` bg-gradient-to-br ${section.gradient}` : ""}`}
                     style={cardGrad ? { background: cardGrad } : undefined}
                   >
                     <Icon className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
-
                   <div className="text-center">
-                    <h3 className="text-sm md:text-base font-bold text-white mb-0.5 leading-tight">
-                      {section.title}
-                    </h3>
-                    <p className="text-[10px] md:text-xs text-white/40 group-hover:text-white/60 transition-colors">
-                      {section.description}
-                    </p>
+                    <h3 className="text-sm md:text-base font-bold text-white mb-0.5 leading-tight">{section.title}</h3>
+                    <p className="text-[10px] md:text-xs text-white/40 group-hover:text-white/60 transition-colors">{section.description}</p>
                   </div>
                 </div>
-
                 <motion.div
                   initial={{ x: "-100%" }}
                   whileHover={{ x: "100%" }}
@@ -253,7 +296,27 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
               </motion.button>
             );
           })}
+
+          {customMain.map((cs, i) => (
+            <CustomSectionCard key={cs.id} cs={cs} index={i} delay={0.7 + i * 0.07} onSelect={onSelect} />
+          ))}
         </div>
+
+        {customBottom.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="mb-4"
+          >
+            <p className="text-white/30 text-xs uppercase tracking-widest text-center mb-3">Secciones personalizadas</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+              {customBottom.map((cs, i) => (
+                <CustomSectionCard key={cs.id} cs={cs} index={i} delay={0.95 + i * 0.07} onSelect={onSelect} />
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
           {extraHubs.map((hub) => {
@@ -301,64 +364,6 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
             );
           })}
         </div>
-
-        {customSections.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.95 }}
-            className="mt-2"
-          >
-            <p className="text-white/30 text-xs uppercase tracking-widest text-center mb-3">Secciones personalizadas</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {customSections.map((cs, i) => (
-                <motion.button
-                  key={cs.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.0 + i * 0.07 }}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => onSelect(cs.id)}
-                  data-testid={`button-section-${cs.id}`}
-                  className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/25 transition-all duration-500 shadow-xl"
-                >
-                  <div
-                    className="absolute -inset-2 rounded-3xl blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 -z-10"
-                    style={{ background: cs.cardGradient }}
-                  />
-                  <div className="relative p-5 md:p-7 flex flex-col items-center gap-3">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1], rotate: [0, 4, -4, 0] }}
-                      transition={{ duration: 3.5 + i * 0.5, repeat: Infinity }}
-                      className="text-3xl md:text-4xl"
-                    >
-                      {cs.logoType === "image" && cs.logoValue ? (
-                        <img src={cs.logoValue} alt={cs.title} className="w-10 h-10 rounded-full object-cover" />
-                      ) : (cs.logoValue || cs.emoji)}
-                    </motion.div>
-                    <div
-                      className="p-2 md:p-2.5 rounded-xl shadow-lg"
-                      style={{ background: cs.cardGradient }}
-                    >
-                      <Plus className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="text-center">
-                      <h3 className="text-sm md:text-base font-bold text-white mb-0.5 leading-tight">{cs.title}</h3>
-                      <p className="text-[10px] md:text-xs text-white/40 group-hover:text-white/60 transition-colors">{cs.dateLabel}</p>
-                    </div>
-                  </div>
-                  <motion.div
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "100%" }}
-                    transition={{ duration: 0.7 }}
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent"
-                  />
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
 
         <motion.div
           initial={{ opacity: 0 }}
