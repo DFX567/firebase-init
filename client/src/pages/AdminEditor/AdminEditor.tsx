@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Save, Check, Edit3, ChevronRight, Loader2,
-  Palette, PlusCircle, Layers, Trash2, Pencil, ImagePlus, X
+  Palette, PlusCircle, Layers, Trash2, Pencil, ImagePlus, X, Globe
 } from "lucide-react";
+import BackgroundEditor from "./BackgroundEditor";
 import {
   getContentKey,
   getContent,
@@ -36,7 +37,7 @@ const BUILTIN_SECTIONS = [
 ];
 
 const DAY_NAMES = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-type Tab = "content" | "visuals" | "create" | "manage";
+type Tab = "content" | "visuals" | "create" | "manage" | "fondos";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 function GradientPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
@@ -348,11 +349,22 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
     refreshCustom();
   };
 
+  const handleAssignBg = (configId: string, sectionId: string, target: "main" | "content") => {
+    const sec = customSections.find((s) => s.id === sectionId);
+    if (!sec) return;
+    const updated = target === "main"
+      ? { ...sec, mainBgConfigId: configId }
+      : { ...sec, contentBgConfigId: configId };
+    saveCustomSection(updated);
+    refreshCustom();
+  };
+
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "content", label: "Contenido", icon: <Edit3 className="w-4 h-4" /> },
     { id: "visuals", label: "Visuales", icon: <Palette className="w-4 h-4" /> },
     { id: "create", label: editingCustomId ? "Editar" : "Crear", icon: <PlusCircle className="w-4 h-4" /> },
-    { id: "manage", label: "Mis Secciones", icon: <Layers className="w-4 h-4" /> },
+    { id: "manage", label: "Secciones", icon: <Layers className="w-4 h-4" /> },
+    { id: "fondos", label: "Fondos", icon: <Globe className="w-4 h-4" /> },
   ];
 
   const activeContentSec = contentCustomId
@@ -699,6 +711,14 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
                   </motion.div>
                 ))
               )}
+            </motion.div>
+          )}
+          {tab === "fondos" && (
+            <motion.div key="fondos" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <BackgroundEditor
+                onAssign={handleAssignBg}
+                customSectionIds={customSections.map((s) => ({ id: s.id, title: s.title }))}
+              />
             </motion.div>
           )}
         </AnimatePresence>

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Zap, SkipForward, BookOpen, Feather } from "lucide-react";
 import { CustomSectionConfig } from "@/utils/customSections";
-import { getContent } from "@/utils/contentOverrides";
+import { getBgConfig } from "@/utils/backgroundConfigs";
+import CustomBackground from "@/components/CustomBackground";
 import { useTypewriter } from "@/hooks/useTypewriter";
 
 interface Props {
@@ -44,14 +45,19 @@ export default function CustomSectionContent({ config, contentType, year, onBack
   const Icon = contentType === "letter" ? BookOpen : Feather;
   const label = contentType === "letter" ? "Carta" : "Poema";
 
+  const bgConfig = config.contentBgConfigId ? getBgConfig(config.contentBgConfigId) : null;
+
   return (
     <div
       className="min-h-screen relative overflow-hidden"
-      style={{ background: config.contentBg }}
+      style={bgConfig ? undefined : { background: config.contentBg }}
     >
-      <div className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{ backgroundImage: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 60%)" }}
-      />
+      {bgConfig && <CustomBackground config={bgConfig} />}
+      {!bgConfig && (
+        <div className="absolute inset-0 opacity-10 pointer-events-none"
+          style={{ backgroundImage: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 60%)" }}
+        />
+      )}
 
       <div className="relative z-10 p-4 md:p-6 flex items-center justify-between">
         <motion.button

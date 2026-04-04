@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, BookOpen, Feather, CalendarDays } from "lucide-react";
 import { CustomSectionConfig } from "@/utils/customSections";
-import { getContent } from "@/utils/contentOverrides";
+import { getBgConfig } from "@/utils/backgroundConfigs";
+import CustomBackground from "@/components/CustomBackground";
 
 interface Props {
   config: CustomSectionConfig;
@@ -18,15 +19,19 @@ export default function CustomSectionHome({ config, onBack, onNavigate }: Props)
     : [];
 
   const currentYear = new Date().getFullYear();
+  const bgConfig = config.mainBgConfigId ? getBgConfig(config.mainBgConfigId) : null;
 
   return (
     <div
       className="min-h-screen relative overflow-hidden"
-      style={{ background: config.mainBg }}
+      style={bgConfig ? undefined : { background: config.mainBg }}
     >
-      <div className="absolute inset-0 opacity-10"
-        style={{ backgroundImage: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 0%, transparent 60%)" }}
-      />
+      {bgConfig && <CustomBackground config={bgConfig} />}
+      {!bgConfig && (
+        <div className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 0%, transparent 60%)" }}
+        />
+      )}
 
       <div className="relative z-10 p-4 md:p-6">
         <motion.button
