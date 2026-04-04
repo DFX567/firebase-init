@@ -1,3 +1,7 @@
+export type SurfaceDetail = "none" | "continents" | "craters" | "storm" | "lava" | "icecaps";
+export type StarMovement = "twinkle" | "drift" | "pulse" | "none";
+export type StarSpeed = "slow" | "medium" | "fast";
+
 export interface PlanetConfig {
   id: string;
   sizePercent: number;
@@ -7,6 +11,15 @@ export interface PlanetConfig {
   type: "rocky" | "gas" | "moon";
   rotationSpeed: number;
   opacity: number;
+  surfaceDetail: SurfaceDetail;
+  surfaceColor: string;
+  surfaceIntensity: number;
+  hasRings: boolean;
+  ringsColor: string;
+  ringsOpacity: number;
+  hasAtmosphere: boolean;
+  atmosphereColor: string;
+  atmosphereSize: number;
 }
 
 export interface NebulaConfig {
@@ -18,6 +31,18 @@ export interface NebulaConfig {
   opacity: number;
 }
 
+export interface CometIndividual {
+  id: string;
+  startX: number;
+  startY: number;
+  angle: number;
+  speed: number;
+  length: number;
+  color: string;
+  width: number;
+  phase: number;
+}
+
 export interface BackgroundConfig {
   id: string;
   name: string;
@@ -27,12 +52,13 @@ export interface BackgroundConfig {
     count: number;
     seed: number;
     color: string;
+    movement: StarMovement;
+    driftAngle: number;
+    speed: StarSpeed;
   };
   comets: {
     enabled: boolean;
-    count: number;
-    seed: number;
-    speed: "slow" | "medium" | "fast";
+    list: CometIndividual[];
   };
   planets: PlanetConfig[];
   nebulas: NebulaConfig[];
@@ -44,11 +70,42 @@ const KEY = "bg-configs-v1";
 export const getBgConfigs = (): BackgroundConfig[] => {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return parsed.map(migrateBgConfig);
   } catch {
     return [];
   }
 };
+
+function migrateBgConfig(c: BackgroundConfig & { comets?: unknown }): BackgroundConfig {
+  const comets = c.comets as BackgroundConfig["comets"] & { count?: number; seed?: number; speed?: string };
+  if (comets && typeof comets.count === "number") {
+    return { ...c, comets: { enabled: comets.enabled, list: [] } };
+  }
+  return {
+    ...c,
+    stars: {
+      movement: "twinkle",
+      driftAngle: 0,
+      speed: "medium",
+      ...c.stars,
+    },
+    comets: c.comets ?? { enabled: true, list: [] },
+    planets: (c.planets ?? []).map((p: PlanetConfig) => ({
+      surfaceDetail: "none",
+      surfaceColor: "#2d6a4f",
+      surfaceIntensity: 0.5,
+      hasRings: false,
+      ringsColor: "#fde68a",
+      ringsOpacity: 0.5,
+      hasAtmosphere: false,
+      atmosphereColor: "#60a5fa",
+      atmosphereSize: 1.4,
+      ...p,
+    })),
+  };
+}
 
 export const getBgConfig = (id: string): BackgroundConfig | null =>
   getBgConfigs().find((c) => c.id === id) ?? null;
@@ -74,14 +131,32 @@ export const PLANET_COLOR_PRESETS: Record<string, [string, string, string]> = {
   Dorado: ["#fde68a", "#fbbf24", "#d97706"],
   Gris: ["#d1d5db", "#9ca3af", "#6b7280"],
   Cian: ["#a5f3fc", "#06b6d4", "#0e7490"],
+  Rojo: ["#fca5a5", "#ef4444", "#b91c1c"],
+  Turquesa: ["#99f6e4", "#14b8a6", "#0f766e"],
 };
 
-export const COMET_DURATIONS = { slow: [8, 14], medium: [4, 8], fast: [2, 4] };
+export const STAR_SPEED_DURATIONS: Record<StarSpeed, [number, number]> = {
+  slow: [5, 9],
+  medium: [2.5, 5],
+  fast: [1, 2.5],
+};
 
 export const DEFAULT_BG_CONFIG: Omit<BackgroundConfig, "id" | "name" | "createdAt"> = {
   bgGradient: "linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%)",
-  stars: { enabled: true, count: 80, seed: 17, color: "#ffffff" },
-  comets: { enabled: true, count: 6, seed: 5, speed: "medium" },
+  stars: { enabled: true, count: 80, seed: 17, color: "#ffffff", movement: "twinkle", driftAngle: 180, speed: "medium" },
+  comets: { enabled: true, list: [] },
   planets: [],
   nebulas: [],
+};
+
+export const DEFAULT_PLANET: Omit<PlanetConfig, "id"> = {
+  sizePercent: 20, x: 50, y: 30,
+  colorPreset: "Violeta", type: "rocky", rotationSpeed: 60, opacity: 0.85,
+  surfaceDetail: "none", surfaceColor: "#2d6a4f", surfaceIntensity: 0.5,
+  hasRings: false, ringsColor: "#fde68a", ringsOpacity: 0.5,
+  hasAtmosphere: false, atmosphereColor: "#60a5fa", atmosphereSize: 1.4,
+};
+
+export const DEFAULT_COMET: Omit<CometIndividual, "id"> = {
+  startX: 20, startY: -2, angle: 135, speed: 6, length: 120, color: "#ffffff", width: 2, phase: 0,
 };
