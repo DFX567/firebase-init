@@ -164,7 +164,11 @@ export const getDefaultContent = (
 };
 
 // ─── Cache local para evitar parpadeos ───────────────────────────────────────
+<<<<<<< HEAD
 
+=======
+const cache: Record<string, string> = {};
+>>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 
 // ─── Leer contenido desde Firestore (una sola vez) ───────────────────────────
 export const getContent = async (
@@ -172,18 +176,30 @@ export const getContent = async (
   defaultContent: string
 ): Promise<string> => {
   // Si ya está en caché, devuelve inmediatamente
+<<<<<<< HEAD
+=======
+  if (cache[key] !== undefined) return cache[key];
+>>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 
   try {
     const ref = doc(db, COLLECTION, key);
     const snap = await getDoc(ref);
     if (snap.exists()) {
       const value = snap.data().value as string;
+<<<<<<< HEAD
+=======
+      cache[key] = value;
+>>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
       return value;
     }
   } catch (err) {
     console.error("Error leyendo contenido:", err);
   }
 
+<<<<<<< HEAD
+=======
+  cache[key] = defaultContent;
+>>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
   return defaultContent;
 };
 
@@ -192,6 +208,10 @@ export const setContent = async (key: string, content: string): Promise<void> =>
   try {
     const ref = doc(db, COLLECTION, key);
     await setDoc(ref, { value: content, updatedAt: new Date().toISOString() });
+<<<<<<< HEAD
+=======
+    cache[key] = content; // actualizar caché local
+>>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
   } catch (err) {
     console.error("Error guardando contenido:", err);
     throw err;
@@ -208,6 +228,10 @@ export const subscribeToContent = (
   return onSnapshot(ref, (snap) => {
     if (snap.exists()) {
       const value = snap.data().value as string;
+<<<<<<< HEAD
+=======
+      cache[key] = value;
+>>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
       callback(value);
     } else {
       callback(defaultContent);

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Cake, Calendar, LogOut, Sparkles, Users, Gamepad2, Star, Flower2, Edit3 } from "lucide-react";
+import { Heart, Cake, Calendar, LogOut, Sparkles, Users, Gamepad2, Star, Flower2, Edit3, Plus } from "lucide-react";
 import SpaceBackground from "@/components/SpaceBackground";
 import SecretMenu from "@/components/SecretMenu";
+import { getCustomSections, getVisualOverride, BUILTIN_DEFAULTS } from "@/utils/customSections";
 import type { User } from "firebase/auth";
 
 interface HubProps {
-  onSelect: (section: "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "floresamarillas" | "games" | "memories" | "admin") => void;
+  onSelect: (section: string) => void;
   onLogout: () => void;
   user: User;
   isAdmin: boolean;
@@ -14,10 +15,11 @@ interface HubProps {
 
 export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
   const [secretMode, setSecretMode] = useState(false);
+  const customSections = getCustomSections();
 
   const mainSections = [
     {
-      id: "sanvalentin" as const,
+      id: "sanvalentin",
       title: "San Valentín",
       icon: Heart,
       gradient: "from-rose-500 via-pink-500 to-rose-600",
@@ -30,7 +32,7 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
       delay: 0.2,
     },
     {
-      id: "cumple" as const,
+      id: "cumple",
       title: "Cumpleaños",
       icon: Cake,
       gradient: "from-violet-500 via-purple-500 to-indigo-600",
@@ -43,7 +45,7 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
       delay: 0.3,
     },
     {
-      id: "anniversary" as const,
+      id: "anniversary",
       title: "Aniversario",
       icon: Calendar,
       gradient: "from-pink-500 via-rose-500 to-pink-600",
@@ -56,7 +58,7 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
       delay: 0.4,
     },
     {
-      id: "amoramistad" as const,
+      id: "amoramistad",
       title: "Amor y Amistad",
       icon: Users,
       gradient: "from-amber-500 via-orange-500 to-yellow-500",
@@ -69,7 +71,7 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
       delay: 0.5,
     },
     {
-      id: "floresamarillas" as const,
+      id: "floresamarillas",
       title: "Flores Amarillas",
       icon: Flower2,
       gradient: "from-yellow-400 via-amber-400 to-yellow-500",
@@ -85,7 +87,7 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
 
   const extraHubs = [
     {
-      id: "games" as const,
+      id: "games",
       title: "Sala de Juegos",
       emoji: "🎮",
       description: "5 juegos especiales",
@@ -98,7 +100,7 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
       delay: 0.75,
     },
     {
-      id: "memories" as const,
+      id: "memories",
       title: "Nuestros Recuerdos",
       emoji: "💫",
       description: "Cápsula · Poemas · Fotos",
@@ -196,6 +198,10 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-5">
           {mainSections.map((section) => {
             const Icon = section.icon;
+            const override = getVisualOverride(section.id);
+            const defaults = BUILTIN_DEFAULTS[section.id];
+            const displayEmoji = override.logoValue ?? defaults?.logoValue ?? section.emoji;
+            const cardGrad = override.cardGradient ?? defaults?.cardGradient;
             return (
               <motion.button
                 key={section.id}
@@ -216,19 +222,20 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
                     transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
                     className="text-3xl md:text-4xl"
                   >
-                    {section.emoji}
+                    {override.logoType === "image" && override.logoValue ? (
+                      <img src={override.logoValue} alt="" className="w-10 h-10 rounded-full object-cover" />
+                    ) : displayEmoji}
                   </motion.div>
 
-                  <motion.div
-                    whileHover={{ rotate: 180 }}
-                    transition={{ duration: 0.5 }}
-                    className={`p-2 md:p-2.5 rounded-xl bg-gradient-to-br ${section.gradient} shadow-lg`}
+                  <div
+                    className={`p-2 md:p-2.5 rounded-xl shadow-lg${!cardGrad ? ` bg-gradient-to-br ${section.gradient}` : ""}`}
+                    style={cardGrad ? { background: cardGrad } : undefined}
                   >
                     <Icon className="w-4 h-4 md:w-5 md:h-5 text-white" />
-                  </motion.div>
+                  </div>
 
                   <div className="text-center">
-                    <h3 className="text-sm md:text-base font-bold text-white mb-0.5 group-hover:text-white transition-colors leading-tight">
+                    <h3 className="text-sm md:text-base font-bold text-white mb-0.5 leading-tight">
                       {section.title}
                     </h3>
                     <p className="text-[10px] md:text-xs text-white/40 group-hover:text-white/60 transition-colors">
@@ -248,7 +255,7 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
           })}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
           {extraHubs.map((hub) => {
             const Icon = hub.icon;
             return (
@@ -264,7 +271,6 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
                 className={`group relative overflow-hidden rounded-2xl bg-gradient-to-r ${hub.bgCard} backdrop-blur-xl border ${hub.border} ${hub.hoverBorder} transition-all duration-500 shadow-xl`}
               >
                 <div className={`absolute -inset-2 ${hub.glow} rounded-3xl blur-xl opacity-0 group-hover:opacity-60 transition-opacity duration-500 -z-10`} />
-
                 <div className="relative flex items-center gap-4 p-5 md:p-6">
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
@@ -273,16 +279,10 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
                   >
                     {hub.emoji}
                   </motion.div>
-
                   <div className="flex-1 text-left">
-                    <h3 className="text-base md:text-lg font-bold text-white mb-1 group-hover:text-white transition-colors">
-                      {hub.title}
-                    </h3>
-                    <p className="text-xs md:text-sm text-white/40 group-hover:text-white/60 transition-colors">
-                      {hub.description}
-                    </p>
+                    <h3 className="text-base md:text-lg font-bold text-white mb-1">{hub.title}</h3>
+                    <p className="text-xs md:text-sm text-white/40 group-hover:text-white/60 transition-colors">{hub.description}</p>
                   </div>
-
                   <motion.div
                     whileHover={{ rotate: 360 }}
                     transition={{ duration: 0.6 }}
@@ -291,7 +291,6 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
                     <Icon className="w-5 h-5 text-white" />
                   </motion.div>
                 </div>
-
                 <motion.div
                   initial={{ x: "-100%" }}
                   whileHover={{ x: "100%" }}
@@ -302,6 +301,64 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
             );
           })}
         </div>
+
+        {customSections.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.95 }}
+            className="mt-2"
+          >
+            <p className="text-white/30 text-xs uppercase tracking-widest text-center mb-3">Secciones personalizadas</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+              {customSections.map((cs, i) => (
+                <motion.button
+                  key={cs.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.0 + i * 0.07 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => onSelect(cs.id)}
+                  data-testid={`button-section-${cs.id}`}
+                  className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/25 transition-all duration-500 shadow-xl"
+                >
+                  <div
+                    className="absolute -inset-2 rounded-3xl blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 -z-10"
+                    style={{ background: cs.cardGradient }}
+                  />
+                  <div className="relative p-5 md:p-7 flex flex-col items-center gap-3">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1], rotate: [0, 4, -4, 0] }}
+                      transition={{ duration: 3.5 + i * 0.5, repeat: Infinity }}
+                      className="text-3xl md:text-4xl"
+                    >
+                      {cs.logoType === "image" && cs.logoValue ? (
+                        <img src={cs.logoValue} alt={cs.title} className="w-10 h-10 rounded-full object-cover" />
+                      ) : (cs.logoValue || cs.emoji)}
+                    </motion.div>
+                    <div
+                      className="p-2 md:p-2.5 rounded-xl shadow-lg"
+                      style={{ background: cs.cardGradient }}
+                    >
+                      <Plus className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-sm md:text-base font-bold text-white mb-0.5 leading-tight">{cs.title}</h3>
+                      <p className="text-[10px] md:text-xs text-white/40 group-hover:text-white/60 transition-colors">{cs.dateLabel}</p>
+                    </div>
+                  </div>
+                  <motion.div
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: "100%" }}
+                    transition={{ duration: 0.7 }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent"
+                  />
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -321,7 +378,7 @@ export default function Hub({ onSelect, onLogout, user, isAdmin }: HubProps) {
               className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-indigo-300/30 text-white/40 hover:text-indigo-300 transition-all text-sm"
             >
               <Edit3 className="w-3.5 h-3.5" />
-              Editar contenido
+              Modo Desarrollador
             </motion.button>
           )}
 

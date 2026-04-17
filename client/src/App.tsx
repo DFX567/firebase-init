@@ -18,6 +18,7 @@ import GamesHub from "@/pages/GamesHub/GamesHub";
 import MemoriesHub from "@/pages/MemoriesHub/MemoriesHub";
 import FloresAmarillaRouter from "@/pages/FloresAmarillas/FloresAmarillaRouter";
 import AdminEditor from "@/pages/AdminEditor/AdminEditor";
+import CustomSectionRouter from "@/pages/CustomSection/CustomSectionRouter";
 
 const ALLOWED_EMAILS = [
   "dfx1mas87@gmail.com",
@@ -26,12 +27,10 @@ const ALLOWED_EMAILS = [
 
 const ADMIN_EMAIL = "dfx1mas87@gmail.com";
 
-type Section = "hub" | "anniversary" | "cumple" | "sanvalentin" | "amoramistad" | "floresamarillas" | "games" | "memories" | "admin";
-
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [section, setSection] = useState<Section>("hub");
+  const [section, setSection] = useState("hub");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -96,6 +95,10 @@ export default function App() {
   if (section === "games") return <GamesHub onBack={() => setSection("hub")} />;
   if (section === "memories") return <MemoriesHub onBack={() => setSection("hub")} />;
   if (section === "admin") return <AdminEditor onBack={() => setSection("hub")} />;
+
+  if (section.startsWith("custom-")) {
+    return <CustomSectionRouter sectionId={section} onBack={() => setSection("hub")} />;
+  }
 
   return <Hub onSelect={setSection} onLogout={handleLogout} user={user} isAdmin={user.email === ADMIN_EMAIL} />;
 }
