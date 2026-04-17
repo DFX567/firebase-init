@@ -1,13 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-<<<<<<< HEAD
-import { ArrowLeft, Save, Check, Edit3, ChevronRight, Loader2 } from "lucide-react";
-import { getContentKey, getContent, setContent, getDefaultContent } from "@/utils/contentOverrides";
-=======
 import {
   ArrowLeft, Save, Check, Edit3, ChevronRight, Loader2,
-  Palette, PlusCircle, Layers, Trash2, Pencil, ImagePlus, X
+  Palette, PlusCircle, Layers, Trash2, Pencil, ImagePlus, X, Globe
 } from "lucide-react";
+import BackgroundEditor from "./BackgroundEditor";
 import {
   getContentKey,
   getContent,
@@ -26,17 +23,12 @@ import {
   BUILTIN_DEFAULTS,
   type CustomSectionConfig,
 } from "@/utils/customSections";
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 
 interface AdminEditorProps {
   onBack: () => void;
 }
 
-<<<<<<< HEAD
-const SECTIONS = [
-=======
 const BUILTIN_SECTIONS = [
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
   { id: "sanvalentin", label: "San Valentín", emoji: "💕", types: ["letter", "poem"] as const, typeLabels: { letter: "Carta", poem: "Poema" }, years: [2025, 2026, 2027, 2028, 2029, 2030], hasDays: false },
   { id: "anniversary", label: "Aniversario", emoji: "💍", types: ["letter", "poem"] as const, typeLabels: { letter: "Carta", poem: "Poema" }, years: [2024, 2025, 2026, 2027, 2028, 2029, 2030], hasDays: false },
   { id: "cumple", label: "Cumpleaños", emoji: "🎂", types: ["letter"] as const, typeLabels: { letter: "Carta", poem: "" }, years: [2024, 2025, 2026, 2027, 2028, 2029, 2030], hasDays: false },
@@ -45,11 +37,7 @@ const BUILTIN_SECTIONS = [
 ];
 
 const DAY_NAMES = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-<<<<<<< HEAD
-type Step = "section" | "editor";
-type SaveState = "idle" | "saving" | "saved" | "error";
-=======
-type Tab = "content" | "visuals" | "create" | "manage";
+type Tab = "content" | "visuals" | "create" | "manage" | "fondos";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 function GradientPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
@@ -155,7 +143,6 @@ function LogoPicker({ logoType, logoValue, onChange }: {
     </div>
   );
 }
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 
 export default function AdminEditor({ onBack }: AdminEditorProps) {
   const [tab, setTab] = useState<Tab>("content");
@@ -169,28 +156,6 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
   const [editText, setEditText] = useState("");
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [loadingContent, setLoadingContent] = useState(false);
-<<<<<<< HEAD
-
-  useEffect(() => {
-    if (step !== "editor") return;
-    const key = getContentKey(selectedSection.id, selectedType, selectedYear, selectedDay);
-    const def = getDefaultContent(selectedSection.id, selectedType, selectedYear, selectedDay);
-    setLoadingContent(true);
-    setSaveState("idle");
-    getContent(key, def).then((value) => {
-      setEditText(value);
-      setLoadingContent(false);
-    });
-  }, [step, selectedSection, selectedType, selectedYear, selectedDay]);
-
-  const handleSave = async () => {
-    if (saveState === "saving") return;
-    setSaveState("saving");
-    const key = getContentKey(selectedSection.id, selectedType, selectedYear, selectedDay);
-    try {
-      await setContent(key, editText);
-      setSaveState("saved");
-=======
 
   const [customSections, setCustomSections] = useState(getCustomSections);
 
@@ -216,6 +181,7 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
     hasYears: true,
     yearStart: 2025,
     yearEnd: 2030,
+    position: "custom" as "main" | "custom",
   });
   const [editingCustomId, setEditingCustomId] = useState<string | null>(null);
   const [createSaveState, setCreateSaveState] = useState<SaveState>("idle");
@@ -285,7 +251,6 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
         await setContent(key, editText);
         setSaveState("saved");
       }
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
       setTimeout(() => setSaveState("idle"), 2500);
     } catch {
       setSaveState("error");
@@ -359,13 +324,14 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
       hasYears: createForm.hasYears,
       yearStart: createForm.yearStart,
       yearEnd: createForm.yearEnd,
+      position: createForm.position,
       createdAt: editingCustomId ? (customSections.find((s) => s.id === id)?.createdAt ?? Date.now()) : Date.now(),
     };
     saveCustomSection(section);
     refreshCustom();
     setCreateSaveState("saved");
     setEditingCustomId(null);
-    setCreateForm({ id: "", title: "", emoji: "❤️", dateLabel: "", cardGradient: GRADIENT_PRESETS[0].value, mainBg: BACKGROUND_PRESETS[0].value, contentBg: BACKGROUND_PRESETS[1].value, logoType: "emoji", logoValue: "❤️", contentTypes: ["letter"], hasYears: true, yearStart: 2025, yearEnd: 2030 });
+    setCreateForm({ id: "", title: "", emoji: "❤️", dateLabel: "", cardGradient: GRADIENT_PRESETS[0].value, mainBg: BACKGROUND_PRESETS[0].value, contentBg: BACKGROUND_PRESETS[1].value, logoType: "emoji", logoValue: "❤️", contentTypes: ["letter"], hasYears: true, yearStart: 2025, yearEnd: 2030, position: "custom" });
     setTimeout(() => { setCreateSaveState("idle"); setTab("manage"); }, 1500);
   };
 
@@ -373,7 +339,7 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
     const s = getCustomSection(id);
     if (!s) return;
     setEditingCustomId(id);
-    setCreateForm({ id: s.id, title: s.title, emoji: s.emoji, dateLabel: s.dateLabel, cardGradient: s.cardGradient, mainBg: s.mainBg, contentBg: s.contentBg, logoType: s.logoType, logoValue: s.logoValue, contentTypes: s.contentTypes, hasYears: s.hasYears, yearStart: s.yearStart, yearEnd: s.yearEnd });
+    setCreateForm({ id: s.id, title: s.title, emoji: s.emoji, dateLabel: s.dateLabel, cardGradient: s.cardGradient, mainBg: s.mainBg, contentBg: s.contentBg, logoType: s.logoType, logoValue: s.logoValue, contentTypes: s.contentTypes, hasYears: s.hasYears, yearStart: s.yearStart, yearEnd: s.yearEnd, position: s.position ?? "custom" });
     setTab("create");
   };
 
@@ -383,11 +349,22 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
     refreshCustom();
   };
 
+  const handleAssignBg = (configId: string, sectionId: string, target: "main" | "content") => {
+    const sec = customSections.find((s) => s.id === sectionId);
+    if (!sec) return;
+    const updated = target === "main"
+      ? { ...sec, mainBgConfigId: configId }
+      : { ...sec, contentBgConfigId: configId };
+    saveCustomSection(updated);
+    refreshCustom();
+  };
+
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "content", label: "Contenido", icon: <Edit3 className="w-4 h-4" /> },
     { id: "visuals", label: "Visuales", icon: <Palette className="w-4 h-4" /> },
     { id: "create", label: editingCustomId ? "Editar" : "Crear", icon: <PlusCircle className="w-4 h-4" /> },
-    { id: "manage", label: "Mis Secciones", icon: <Layers className="w-4 h-4" /> },
+    { id: "manage", label: "Secciones", icon: <Layers className="w-4 h-4" /> },
+    { id: "fondos", label: "Fondos", icon: <Globe className="w-4 h-4" /> },
   ];
 
   const activeContentSec = contentCustomId
@@ -397,11 +374,6 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
-<<<<<<< HEAD
-        <motion.button initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-          onClick={step === "editor" ? () => setStep("section") : onBack}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/10 mb-8 text-white/80"
-=======
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -410,27 +382,17 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
             else onBack();
           }}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/10 mb-6 text-white/80"
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm">{tab === "content" && contentStep === "editor" ? "Secciones" : "Volver al Hub"}</span>
         </motion.button>
 
-<<<<<<< HEAD
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <div className="inline-flex p-4 rounded-2xl bg-indigo-500/20 border border-indigo-300/30 mb-4">
-            <Edit3 className="w-10 h-10 text-indigo-300" />
-          </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Panel de Administración</h1>
-          <p className="text-white/40 text-sm">Los cambios se sincronizan en todos los dispositivos</p>
-=======
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-6">
           <div className="inline-flex p-4 rounded-2xl bg-indigo-500/20 border border-indigo-300/30 mb-3">
             <Edit3 className="w-9 h-9 text-indigo-300" />
           </div>
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Modo Desarrollador</h1>
           <p className="text-white/40 text-sm">Panel de administración avanzado</p>
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
         </motion.div>
 
         <div className="flex gap-1 bg-white/5 rounded-2xl p-1 mb-6 border border-white/10">
@@ -447,25 +409,6 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
         </div>
 
         <AnimatePresence mode="wait">
-<<<<<<< HEAD
-          {step === "section" ? (
-            <motion.div key="section" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-3">
-              <p className="text-white/50 text-sm mb-4">Selecciona una sección para editar:</p>
-              {SECTIONS.map((section) => (
-                <motion.button key={section.id} whileHover={{ x: 4, scale: 1.01 }} whileTap={{ scale: 0.98 }}
-                  onClick={() => handleOpenEditor(section)}
-                  className="w-full flex items-center justify-between px-5 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all"
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="text-2xl">{section.emoji}</span>
-                    <div className="text-left">
-                      <p className="text-white font-semibold">{section.label}</p>
-                      <p className="text-white/40 text-xs mt-0.5">
-                        {section.types.map(t => section.typeLabels[t]).filter(Boolean).join(" · ")}
-                        {section.years ? ` · ${section.years[0]}–${section.years[section.years.length - 1]}` : ""}
-                        {section.hasDays ? " · 7 días" : ""}
-                      </p>
-=======
           {tab === "content" && (
             <motion.div key="content" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
               {contentStep === "section" ? (
@@ -508,7 +451,6 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
                           </button>
                         ))}
                       </div>
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
                     </div>
                   )}
                   {activeContentSec.years && (
@@ -566,53 +508,7 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
                 </div>
               ) : null}
             </motion.div>
-<<<<<<< HEAD
-          ) : (
-            <motion.div key="editor" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
-              {selectedSection.types.length > 1 && (
-                <div>
-                  <p className="text-white/50 text-xs uppercase tracking-wider mb-2">Tipo de contenido</p>
-                  <div className="flex gap-2">
-                    {selectedSection.types.map((t) => (
-                      <button key={t} onClick={() => setSelectedType(t)}
-                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${selectedType === t ? "bg-indigo-500 text-white" : "bg-white/5 text-white/50 hover:bg-white/10"}`}>
-                        {selectedSection.typeLabels[t]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {selectedSection.years && (
-                <div>
-                  <p className="text-white/50 text-xs uppercase tracking-wider mb-2">Año</p>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedSection.years.map((y) => (
-                      <button key={y} onClick={() => setSelectedYear(y)}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${selectedYear === y ? "bg-indigo-500 text-white" : "bg-white/5 text-white/50 hover:bg-white/10"}`}>
-                        {y}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {selectedSection.hasDays && (
-                <div>
-                  <p className="text-white/50 text-xs uppercase tracking-wider mb-2">Día de la semana</p>
-                  <div className="flex flex-wrap gap-2">
-                    {DAY_NAMES.map((d, i) => (
-                      <button key={i} onClick={() => setSelectedDay(i)}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${selectedDay === i ? "bg-indigo-500 text-white" : "bg-white/5 text-white/50 hover:bg-white/10"}`}>
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-=======
           )}
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 
           {tab === "visuals" && (
             <motion.div key="visuals" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
@@ -627,35 +523,6 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
                     </button>
                   ))}
                 </div>
-<<<<<<< HEAD
-                {loadingContent ? (
-                  <div className="w-full h-64 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center">
-                    <Loader2 className="w-6 h-6 text-indigo-300 animate-spin" />
-                  </div>
-                ) : (
-                  <textarea value={editText} onChange={(e) => { setEditText(e.target.value); setSaveState("idle"); }}
-                    rows={16}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white/90 placeholder:text-white/20 focus:outline-none focus:border-indigo-400/50 resize-none font-mono text-sm leading-relaxed"
-                    placeholder="Escribe el contenido aquí..."
-                  />
-                )}
-              </div>
-
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleSave}
-                disabled={!editText.trim() || saveState === "saving" || loadingContent}
-                className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-base transition-all ${
-                  saveState === "saved" ? "bg-green-500 text-white" :
-                  saveState === "error" ? "bg-red-500 text-white" :
-                  "bg-indigo-500 hover:bg-indigo-600 text-white disabled:opacity-40 disabled:cursor-not-allowed"
-                }`}>
-                {saveState === "saving" ? <><Loader2 className="w-5 h-5 animate-spin" /> Guardando...</> :
-                 saveState === "saved" ? <><Check className="w-5 h-5" /> Guardado en todos los dispositivos</> :
-                 saveState === "error" ? <>❌ Error al guardar</> :
-                 <><Save className="w-5 h-5" /> Guardar cambios</>}
-              </motion.button>
-
-              <p className="text-white/25 text-xs text-center">Los cambios se guardan en Firebase y se sincronizan en todos los dispositivos.</p>
-=======
               </div>
 
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 mb-2">
@@ -695,7 +562,7 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
               <div className="flex items-center justify-between">
                 <p className="text-white font-bold text-lg">{editingCustomId ? "Editar sección" : "Nueva sección"}</p>
                 {editingCustomId && (
-                  <button onClick={() => { setEditingCustomId(null); setCreateForm({ id: "", title: "", emoji: "❤️", dateLabel: "", cardGradient: GRADIENT_PRESETS[0].value, mainBg: BACKGROUND_PRESETS[0].value, contentBg: BACKGROUND_PRESETS[1].value, logoType: "emoji", logoValue: "❤️", contentTypes: ["letter"], hasYears: true, yearStart: 2025, yearEnd: 2030 }); }}
+                  <button onClick={() => { setEditingCustomId(null); setCreateForm({ id: "", title: "", emoji: "❤️", dateLabel: "", cardGradient: GRADIENT_PRESETS[0].value, mainBg: BACKGROUND_PRESETS[0].value, contentBg: BACKGROUND_PRESETS[1].value, logoType: "emoji", logoValue: "❤️", contentTypes: ["letter"], hasYears: true, yearStart: 2025, yearEnd: 2030, position: "custom" }); }}
                     className="text-white/40 hover:text-white/70 text-xs flex items-center gap-1">
                     <X className="w-3 h-3" /> Cancelar edición
                   </button>
@@ -728,6 +595,25 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
               <BgPicker label="Fondo de cartas / subsecciones" value={createForm.contentBg} onChange={(v) => setCreateForm((f) => ({ ...f, contentBg: v }))} />
               <LogoPicker logoType={createForm.logoType} logoValue={createForm.logoValue}
                 onChange={(type, val) => setCreateForm((f) => ({ ...f, logoType: type, logoValue: val }))} />
+
+              <div>
+                <p className="text-white/50 text-xs uppercase tracking-wider mb-2">Posición en el Hub</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {([
+                    { value: "main", label: "Secciones principales", desc: "Junto a San Valentín, Aniversario..." },
+                    { value: "custom", label: "Secciones personalizadas", desc: "En su propia área debajo" },
+                  ] as const).map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setCreateForm((f) => ({ ...f, position: opt.value }))}
+                      className={`text-left px-4 py-3 rounded-xl border transition-all ${createForm.position === opt.value ? "bg-indigo-500/20 border-indigo-400/50 text-white" : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10"}`}
+                    >
+                      <p className="font-semibold text-sm">{opt.label}</p>
+                      <p className="text-xs opacity-60 mt-0.5">{opt.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <div>
                 <p className="text-white/50 text-xs uppercase tracking-wider mb-3">Tipos de contenido</p>
@@ -825,7 +711,14 @@ export default function AdminEditor({ onBack }: AdminEditorProps) {
                   </motion.div>
                 ))
               )}
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
+            </motion.div>
+          )}
+          {tab === "fondos" && (
+            <motion.div key="fondos" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <BackgroundEditor
+                onAssign={handleAssignBg}
+                customSectionIds={customSections.map((s) => ({ id: s.id, title: s.title }))}
+              />
             </motion.div>
           )}
         </AnimatePresence>
