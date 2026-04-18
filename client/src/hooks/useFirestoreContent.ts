@@ -1,16 +1,13 @@
-<<<<<<< HEAD
 import { useEffect, useRef, useState } from "react";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { getContentKey, getDefaultContent } from "@/utils/contentOverrides";
-=======
 import { useState, useEffect } from "react";
 import {
   getContentKey,
   getDefaultContent,
   subscribeToContent,
 } from "@/utils/contentOverrides";
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 
 interface UseFirestoreContentOptions {
   section: string;
@@ -19,20 +16,16 @@ interface UseFirestoreContentOptions {
   day?: number;
 }
 
-<<<<<<< HEAD
-=======
 /**
  * Hook que escucha el contenido de una carta/poema en tiempo real desde Firestore.
  * Si el admin edita el contenido, se actualiza automáticamente en todos los dispositivos.
  */
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 export function useFirestoreContent({
   section,
   type,
   year = new Date().getFullYear(),
   day = new Date().getDay(),
 }: UseFirestoreContentOptions): { content: string; loading: boolean } {
-<<<<<<< HEAD
   const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +46,6 @@ export function useFirestoreContent({
       // Si falla Firestore, ya tenemos el texto por defecto
     });
   }, [section, type, year, day]);
-=======
   const key = getContentKey(section, type, year, day);
   const defaultContent = getDefaultContent(section, type, year, day);
 
@@ -68,7 +60,6 @@ export function useFirestoreContent({
     });
     return () => unsubscribe();
   }, [key, defaultContent]);
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 
   return { content, loading };
 }
