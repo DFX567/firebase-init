@@ -24,9 +24,7 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/90 via-purple-900/85 to-violet-950/90">
         <ConfettiRain count={60} />
       </div>
-<<<<<<< HEAD
       <Planet3D size={380} position={{ x: "10%", y: "25%" }} colors={["#c084fc", "#a78bfa", "#8b5cf6"]} rotationSpeed={90} type="gas" />
-=======
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/25 rounded-full blur-3xl" />
@@ -55,7 +53,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
           🎈
         </motion.div>
       ))}
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
 
       <div className="relative z-10 pt-4 md:pt-6 px-4 md:px-8">
         <motion.button
@@ -105,8 +102,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
                 </pre>
               )}
             </div>
-<<<<<<< HEAD
-=======
 
             <div className="relative min-h-[80px]">
               {loading ? (
@@ -131,7 +126,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
               )}
             </div>
 
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
             <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-purple-300/20">
               <Sparkles className="w-3 h-3 text-purple-300/50" />
               <span className="text-xs text-purple-200/50 uppercase tracking-widest">¡Feliz cumpleaños!</span>
@@ -141,14 +135,12 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
         </motion.div>
 
         {!loading && !done && (
-<<<<<<< HEAD
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
             <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} onClick={speedUp} className="flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 transition-all border border-purple-400/30 backdrop-blur-sm shadow-lg">
               <FastForward className="w-4 h-4 md:w-5 md:h-5" />
               <span className="font-semibold text-sm md:text-base">Acelerar x2</span>
             </motion.button>
             <motion.button whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }} onClick={skip} className="flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 transition-all border border-violet-400/30 backdrop-blur-sm shadow-lg">
-=======
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -170,7 +162,6 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
               onClick={skip}
               className="flex items-center justify-center gap-2 px-6 md:px-8 py-3 md:py-4 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 transition-all border border-violet-400/30 hover:border-violet-400/50 backdrop-blur-sm shadow-lg"
             >
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
               <SkipForward className="w-4 h-4 md:w-5 md:h-5" />
               <span className="font-semibold text-sm md:text-base">Mostrar todo</span>
             </motion.button>
@@ -178,15 +169,12 @@ export default function BirthdayLetter({ year, onBack }: BirthdayLetterProps) {
         )}
 
         {!loading && done && (
-<<<<<<< HEAD
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center mt-8">
-=======
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center mt-8"
           >
->>>>>>> c0004e4b62f689f03e73f6e42b85f38118ba9e2a
             <p className="text-purple-200/70 text-sm md:text-base">🎊 Mensaje completo 🎊</p>
           </motion.div>
         )}
